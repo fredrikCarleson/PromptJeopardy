@@ -1,25 +1,33 @@
-import { useState, useEffect } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { CheckCircle, Pause, Play } from 'lucide-react';
 import { Tile } from '../types';
+import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
 
 interface PresentationScreenProps {
   pairName: string;
   activeTile: Tile | undefined;
+  durationSeconds: number;
   onFinish: () => void;
 }
 
 export default function PresentationScreen({
   pairName,
   activeTile,
+  durationSeconds,
   onFinish,
 }: PresentationScreenProps) {
-  const [timeRemaining, setTimeRemaining] = useState(90);
+  const [timeRemaining, setTimeRemaining] = useState(durationSeconds);
   const [isRunning, setIsRunning] = useState(true);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onFinish();
+    setTimeRemaining(durationSeconds);
+    setIsRunning(true);
+  }, [durationSeconds, activeTile?.id]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onFinish();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -40,75 +48,77 @@ export default function PresentationScreen({
   }, [isRunning, timeRemaining]);
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6 z-50" role="dialog" aria-modal="true" aria-label="Presentation">
-      <div className="w-full max-w-4xl space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="text-sm uppercase tracking-widest text-slate-400 font-semibold">Presenterande par</div>
-          <div className="text-5xl lg:text-6xl font-bold text-white">{pairName}</div>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Muntlig reflektion"
+    >
+      <div className="w-full max-w-5xl space-y-6">
+        <div className="text-center">
+          <div className="text-sm font-bold uppercase tracking-widest text-yellow-200">Presenterande par</div>
+          <div className="mt-2 text-5xl font-black text-white lg:text-7xl">{pairName}</div>
+          <p className="mt-3 text-lg text-slate-300">
+            Visa resultatet från er egen dator och beskriv hur ni promptade.
+          </p>
         </div>
 
-        {/* Active task */}
         {activeTile && (
-          <div className="bg-slate-800/80 border border-slate-600 rounded-xl p-5 text-center">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Aktiv uppgift</div>
-            <div className="text-xl font-semibold text-white leading-snug">{activeTile.title}</div>
-            <div className="text-sm text-slate-400 mt-2">{activeTile.points} poäng — {activeTile.category}</div>
+          <div className="rounded-lg border border-blue-500/40 bg-blue-950/50 p-5 text-center">
+            <div className="text-xs font-bold uppercase tracking-wider text-blue-200">
+              {TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng · {activeTile.toolFocus} · {activeTile.appFocus}
+            </div>
+            <div className="mt-2 text-2xl font-bold text-white">{activeTile.title}</div>
+            <p className="mx-auto mt-2 max-w-3xl text-sm leading-relaxed text-blue-100/90">{activeTile.task}</p>
           </div>
         )}
 
-        {/* Presentation template */}
-        <div className="bg-slate-800/80 border-2 border-blue-500/40 rounded-xl p-6 space-y-4">
-          <div className="text-center text-sm uppercase tracking-widest text-blue-400 font-semibold mb-4">
-            Presentationsmall
+        {activeTile && (
+          <div className="grid gap-4 md:grid-cols-3">
+            {activeTile.verbalPresentationPrompt.map((prompt, index) => (
+              <div key={prompt} className="rounded-lg border border-slate-700 bg-slate-900 p-5">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-yellow-300 text-lg font-black text-slate-950">
+                  {index + 1}
+                </div>
+                <p className="text-lg font-semibold leading-snug text-white">{prompt}</p>
+              </div>
+            ))}
           </div>
+        )}
 
-          <div className="bg-slate-700/50 p-5 rounded-lg border-l-4 border-emerald-500">
-            <div className="text-sm font-bold text-emerald-400 mb-1">1. Vad försökte ni uppnå?</div>
-            <div className="text-slate-300 text-sm">Beskriv er målsättning och strategi med prompten</div>
-          </div>
-
-          <div className="bg-slate-700/50 p-5 rounded-lg border-l-4 border-amber-500">
-            <div className="text-sm font-bold text-amber-400 mb-1">2. Vad funkade inte först?</div>
-            <div className="text-slate-300 text-sm">Dela er process och eventuella utmaningar ni stötte på</div>
-          </div>
-
-          <div className="bg-slate-700/50 p-5 rounded-lg border-l-4 border-blue-500">
-            <div className="text-sm font-bold text-blue-400 mb-1">3. Vad ändrade ni i prompten?</div>
-            <div className="text-slate-300 text-sm">Förklara era iterationer och hur ni förbättrade resultatet</div>
-          </div>
-        </div>
-
-        {/* Timer and controls */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-          <div className={`text-6xl font-bold font-mono px-8 py-3 rounded-xl ${
-            timeRemaining <= 10 ? 'bg-red-500/20 text-red-400' : timeRemaining <= 30 ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700 text-white'
-          }`} role="timer" aria-label={`Presentationstid kvar: ${formatTime(timeRemaining)}`}>
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div
+            className={`rounded-lg px-8 py-4 text-center font-mono text-6xl font-black ${
+              timeRemaining <= 10
+                ? 'bg-red-500/20 text-red-200'
+                : timeRemaining <= 30
+                  ? 'bg-amber-500/20 text-amber-200'
+                  : 'bg-slate-800 text-white'
+            }`}
+            role="timer"
+            aria-label={`Presentationstid kvar: ${formatTime(timeRemaining)}`}
+          >
             {formatTime(timeRemaining)}
-            {timeRemaining <= 10 && timeRemaining > 0 && (
-              <div className="text-sm font-semibold text-red-400 mt-1">LIVSVIKTIGT!</div>
-            )}
-            {timeRemaining <= 30 && timeRemaining > 10 && (
-              <div className="text-sm font-semibold text-amber-400 mt-1">Snart slut på tid!</div>
-            )}
           </div>
+
           <div className="flex gap-3">
             <button
-              onClick={() => setIsRunning(!isRunning)}
-              className={`px-6 py-3 font-semibold rounded-lg transition-colors text-sm ${
-                isRunning
-                  ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                  : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+              type="button"
+              onClick={() => setIsRunning((prev) => !prev)}
+              className={`flex items-center gap-2 rounded-md px-6 py-3 font-semibold text-white transition-colors ${
+                isRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
               }`}
             >
-              {isRunning ? 'Pausa' : 'Återuppta'}
+              {isRunning ? <Pause size={18} /> : <Play size={18} />}
+              {isRunning ? 'Pausa' : 'Fortsätt'}
             </button>
             <button
+              type="button"
               onClick={onFinish}
-              className="px-6 py-3 font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors flex items-center gap-2 text-sm"
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-500"
             >
               <CheckCircle size={18} />
-              Klar — gå vidare
+              Klar
             </button>
           </div>
         </div>

@@ -1,5 +1,6 @@
-import { Undo2, RotateCcw, Shuffle, Play, Pause, CheckCircle, Presentation } from 'lucide-react';
-import { Tile, RoundPhase } from '../types';
+import { CheckCircle, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2 } from 'lucide-react';
+import { RoundPhase, Tile } from '../types';
+import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
 
 interface RoundFlowProps {
@@ -17,15 +18,30 @@ interface RoundFlowProps {
   canMarkComplete: boolean;
   presenterName: string | null;
   activeTile: Tile | undefined;
+  isFirstRound: boolean;
 }
 
-const StepIndicator = ({ number, label, active, completed }: { number: string; label: string; active: boolean; completed: boolean }) => (
-  <div className={`flex items-center gap-2 text-xs font-semibold px-2 py-1 rounded ${
-    active ? 'bg-white/10 text-white' : completed ? 'text-green-400' : 'text-slate-500'
-  }`}>
-    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
-      active ? 'bg-blue-500 text-white' : completed ? 'bg-green-500 text-white' : 'bg-slate-600 text-slate-400'
-    }`}>
+const StepIndicator = ({
+  number,
+  label,
+  active,
+  completed,
+}: {
+  number: string;
+  label: string;
+  active: boolean;
+  completed: boolean;
+}) => (
+  <div
+    className={`flex items-center gap-2 rounded px-2 py-1 text-xs font-semibold ${
+      active ? 'bg-yellow-300/15 text-yellow-100' : completed ? 'text-emerald-300' : 'text-slate-500'
+    }`}
+  >
+    <span
+      className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
+        active ? 'bg-yellow-300 text-slate-950' : completed ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'
+      }`}
+    >
       {completed ? '✓' : number}
     </span>
     {label}
@@ -47,6 +63,7 @@ export default function RoundFlow({
   canMarkComplete,
   presenterName,
   activeTile,
+  isFirstRound,
 }: RoundFlowProps) {
   const isSelecting = roundPhase === 'selecting_tile';
   const isWorking = roundPhase === 'working';
@@ -54,73 +71,78 @@ export default function RoundFlow({
   const isChoosing = roundPhase === 'choosing_next_tile';
 
   return (
-    <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 space-y-4">
-      <h2 className="text-xl font-bold text-white">Rundflöde</h2>
-
-      {/* Step indicators */}
-      <div className="flex flex-wrap gap-1 mb-2">
-        <StepIndicator number="A" label="Välj" active={isSelecting} completed={!isSelecting} />
-        <StepIndicator number="B" label="Arbeta" active={isWorking} completed={!isWorking && !isSelecting} />
-        <StepIndicator number="C" label="Presentera" active={isPresenting} completed={isChoosing} />
-        <StepIndicator number="D" label="Välj nästa" active={isChoosing} completed={false} />
+    <aside className="space-y-4 rounded-lg border border-slate-700 bg-slate-900 p-5 shadow-xl">
+      <div>
+        <h2 className="text-xl font-bold text-white">Facilitatorflöde</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Appen styr tavlan och poängen. Deltagarna arbetar och presenterar från sina egna datorer.
+        </p>
       </div>
 
-      {/* STEP A: Select tile */}
+      <div className="flex flex-wrap gap-1">
+        <StepIndicator number="1" label="Välj" active={isSelecting} completed={!isSelecting} />
+        <StepIndicator number="2" label="Arbeta" active={isWorking} completed={isPresenting || isChoosing} />
+        <StepIndicator number="3" label="Presentera" active={isPresenting} completed={isChoosing} />
+        <StepIndicator number="4" label="Poäng" active={isChoosing} completed={false} />
+      </div>
+
       {isSelecting && (
-        <div className="space-y-3 bg-blue-500/10 p-4 rounded-lg border border-blue-500/30">
-          <div className="text-base font-semibold text-blue-300">Steg A: Välj startämne</div>
-
-          <div className="bg-blue-500/20 border border-blue-500/50 p-3 rounded-lg">
-            <p className="text-sm text-blue-200">
-              👉 Välj en ruta för att starta denna runda.
-            </p>
-            <p className="text-xs text-slate-400 mt-1">
-              Du kan slumpa eller välja själv. Tips: börja med grönfärgade "Grund"-rutor för att lära dig systemet.
-            </p>
+        <div className="space-y-3 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
+          <div className="font-semibold text-blue-200">
+            {isFirstRound ? 'Första rutan ska slumpas' : 'Välj nästa ruta'}
           </div>
-
+          <p className="text-sm text-slate-300">
+            {isFirstRound
+              ? 'Starta workshopen med slumpen så att ingen styr första ämnet.'
+              : 'Det presenterande paret kan välja en ledig ruta på tavlan, eller så kan du slumpa nästa ruta.'}
+          </p>
           <button
+            type="button"
             onClick={onSelectRandomTile}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-500"
           >
             <Shuffle size={18} />
-            Slumpa startämne
+            Slumpa ruta
           </button>
-          <p className="text-xs text-slate-400 text-center">Eller klicka en ospelad ruta på brädet</p>
         </div>
       )}
 
-      {/* STEP B: Working */}
-      {isWorking && (
-        <div className="space-y-3 bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/30">
-          <div className="text-base font-semibold text-emerald-300">Steg B: Arbete i par</div>
+      {isWorking && activeTile && (
+        <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
+          <div className="font-semibold text-emerald-200">Arbete i par</div>
 
-          {activeTile && (
-            <div className="bg-slate-700/50 p-3 rounded-lg">
-              <div className="text-xs text-slate-400">Aktiv uppgift</div>
-              <div className="text-sm text-white font-medium leading-snug">{activeTile.title}</div>
-              <div className="text-xs text-slate-400 mt-1">{activeTile.points} poäng — {activeTile.category}</div>
+          <div className="rounded-md bg-slate-800 p-3">
+            <div className="text-xs uppercase text-slate-400">{TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng</div>
+            <div className="mt-1 text-base font-bold text-white">{activeTile.title}</div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">{activeTile.task}</p>
+            <div className="mt-3 rounded border border-slate-700 bg-slate-950/60 p-2 text-xs text-slate-300">
+              <span className="font-semibold text-slate-100">Källa:</span> {activeTile.sourceInstruction}
             </div>
-          )}
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+              <span className="rounded border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-emerald-100">
+                {activeTile.toolFocus}
+              </span>
+              <span className="rounded border border-blue-400/30 bg-blue-400/10 px-2 py-1 text-blue-100">
+                {activeTile.appFocus}
+              </span>
+            </div>
+          </div>
 
-          <div className={`text-5xl font-bold text-center py-3 rounded-lg font-mono ${
-            timeRemaining <= 30 ? 'bg-red-500/20 text-red-300' : 'bg-slate-700/50 text-white'
-          }`} role="timer" aria-label={`Tid kvar: ${formatTime(timeRemaining)}`}>
+          <div
+            className={`rounded-md py-3 text-center font-mono text-5xl font-bold ${
+              timeRemaining <= 30 ? 'bg-red-500/20 text-red-200' : 'bg-slate-800 text-white'
+            }`}
+            role="timer"
+            aria-label={`Tid kvar: ${formatTime(timeRemaining)}`}
+          >
             {formatTime(timeRemaining)}
-            {timeRemaining <= 10 && timeRemaining > 0 && (
-              <div className="text-sm font-semibold text-red-400 mt-1">LIVSVIKTIGT!</div>
-            )}
-            {timeRemaining <= 30 && timeRemaining > 10 && (
-              <div className="text-sm font-semibold text-amber-400 mt-1">Snart slut på tid!</div>
-            )}
           </div>
 
           <button
+            type="button"
             onClick={onStartTimer}
-            className={`w-full font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${
-              timerRunning
-                ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+            className={`flex w-full items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors ${
+              timerRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
             }`}
           >
             {timerRunning ? <Pause size={18} /> : <Play size={18} />}
@@ -128,103 +150,96 @@ export default function RoundFlow({
           </button>
 
           <button
+            type="button"
             onClick={onGoToPresenting}
-            className="w-full bg-slate-600 hover:bg-slate-500 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-700 py-2.5 font-semibold text-white transition-colors hover:bg-slate-600"
           >
             <Presentation size={18} />
-            Gå till presentering
+            Gå till muntlig redovisning
           </button>
         </div>
       )}
 
-      {/* STEP C: Presenting */}
       {isPresenting && (
-        <div className="space-y-3 bg-amber-500/10 p-4 rounded-lg border border-amber-500/30">
-          <div className="text-base font-semibold text-amber-300">Steg C: Presentering</div>
+        <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+          <div className="font-semibold text-amber-200">Muntlig redovisning</div>
+          <p className="text-sm text-slate-300">
+            Slumpa vilket par som ska visa och beskriva sitt resultat från den egna datorn.
+          </p>
 
           <button
+            type="button"
             onClick={onSelectRandomPresenter}
-            className="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-amber-600 py-2.5 font-semibold text-white transition-colors hover:bg-amber-500"
           >
             <Shuffle size={18} />
             Slumpa presenterande par
           </button>
 
           {presenterName && (
-            <div className="bg-slate-700 p-4 rounded-lg text-center">
-              <div className="text-xs text-slate-400 mb-1">Presenterande par</div>
-              <div className="text-2xl font-bold text-white">{presenterName}</div>
+            <div className="rounded-md bg-slate-800 p-4 text-center">
+              <div className="text-xs uppercase text-slate-400">Presenterande par</div>
+              <div className="mt-1 text-3xl font-black text-white">{presenterName}</div>
             </div>
           )}
 
           {presenterName && (
             <button
+              type="button"
               onClick={onShowPresentation}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-500"
             >
               <Presentation size={18} />
-              Visa presentationsmall
+              Visa reflektionsfrågor
             </button>
           )}
         </div>
       )}
 
-      {/* STEP D: Choose next tile */}
-      {isChoosing && (
-        <div className="space-y-3 bg-violet-500/10 p-4 rounded-lg border border-violet-500/30">
-          <div className="text-base font-semibold text-violet-300">Steg D: Välj nästa ruta</div>
-
-          {activeTile && (
-            <div className="bg-slate-700/50 p-3 rounded-lg mb-2">
-              <div className="text-xs text-slate-400">Nuvarande ruta</div>
-              <div className="text-sm text-white font-medium">{activeTile.title}</div>
-              <div className="text-xs text-slate-400 mt-1">{activeTile.points} poäng — {activeTile.category}</div>
-            </div>
-          )}
-
-          <div className="bg-violet-500/20 border border-violet-500/50 p-3 rounded-lg">
-            <p className="text-sm text-violet-200 mb-2">
-              {presenterName
-                ? `👉 ${presenterName} — klicka en ospelad ruta på brädet för att välja nästa uppgift`
-                : '👉 Klicka en ospelad ruta på brädet för att välja nästa uppgift'}
-            </p>
-            <p className="text-xs text-slate-400">
-              Eller använd knappen nedan när du är klar med denna ruta.
-            </p>
+      {isChoosing && activeTile && (
+        <div className="space-y-3 rounded-lg border border-violet-500/30 bg-violet-500/10 p-4">
+          <div className="font-semibold text-violet-200">Lägg till poäng</div>
+          <p className="text-sm text-slate-300">
+            Markera uppgiften som klar innan nästa ruta väljs. Därefter får det presenterande paret välja nästa ruta, eller så slumpas den.
+          </p>
+          <div className="rounded-md bg-slate-800 p-3">
+            <div className="text-sm font-semibold text-white">{activeTile.title}</div>
+            <div className="mt-1 text-xs text-slate-400">{activeTile.points} poäng · {TOPIC_LABELS[activeTile.topic]}</div>
           </div>
-
           <button
+            type="button"
             onClick={onMarkComplete}
             disabled={!canMarkComplete}
-            className={`w-full font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+            className={`flex w-full items-center justify-center gap-2 rounded-md py-2.5 font-semibold transition-colors ${
               canMarkComplete
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+                : 'cursor-not-allowed bg-slate-700 text-slate-400'
             }`}
           >
             <CheckCircle size={18} />
-            Markera klar & lägg till poäng
+            Markera klar och lägg till poäng
           </button>
         </div>
       )}
 
-      {/* Bottom actions */}
-      <div className="border-t border-slate-700 pt-4 space-y-2">
+      <div className="space-y-2 border-t border-slate-700 pt-4">
         <button
+          type="button"
           onClick={onUndo}
-          className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-700"
         >
           <Undo2 size={16} />
-          Ångra senaste markering
+          Ångra senaste klara ruta
         </button>
         <button
+          type="button"
           onClick={onReset}
-          className="w-full bg-slate-700 hover:bg-slate-600 text-red-300 font-semibold py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2 text-sm font-semibold text-red-200 transition-colors hover:bg-slate-700"
         >
           <RotateCcw size={16} />
           Nollställ spel
         </button>
       </div>
-    </div>
+    </aside>
   );
 }

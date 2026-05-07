@@ -1,9 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface TopBarProps {
   currentScore: number;
   targetScore: number;
   roundCount: number;
+  completedCount: number;
+  totalTiles: number;
   lastPresenter: string | null;
   goalReached: boolean;
   lastPointsAdded?: number;
@@ -18,35 +20,36 @@ function Confetti() {
   useEffect(() => {
     if (prefersReducedMotion.current) return;
 
-    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
-    const newParticles = Array.from({ length: 60 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      delay: Math.random() * 2,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.random() * 8 + 4,
-      duration: Math.random() * 2 + 2,
-    }));
-    setParticles(newParticles);
+    const colors = ['#facc15', '#38bdf8', '#10b981', '#f97316', '#ffffff'];
+    setParticles(
+      Array.from({ length: 70 }, (_, index) => ({
+        id: index,
+        x: Math.random() * 100,
+        delay: Math.random() * 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 8 + 4,
+        duration: Math.random() * 2 + 2,
+      }))
+    );
   }, []);
 
   if (prefersReducedMotion.current) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
-      {particles.map((p) => (
+    <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none" aria-hidden="true">
+      {particles.map((particle) => (
         <div
-          key={p.id}
+          key={particle.id}
           className="absolute animate-confetti-fall"
           style={{
-            left: `${p.x}%`,
+            left: `${particle.x}%`,
             top: '-20px',
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            backgroundColor: p.color,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            backgroundColor: particle.color,
             borderRadius: Math.random() > 0.5 ? '50%' : '2px',
-            animationDelay: `${p.delay}s`,
-            animationDuration: `${p.duration}s`,
+            animationDelay: `${particle.delay}s`,
+            animationDuration: `${particle.duration}s`,
           }}
         />
       ))}
@@ -58,12 +61,14 @@ export default function TopBar({
   currentScore,
   targetScore,
   roundCount,
+  completedCount,
+  totalTiles,
   lastPresenter,
   goalReached,
   lastPointsAdded,
 }: TopBarProps) {
   const remainingScore = Math.max(0, targetScore - currentScore);
-  const progressPercent = Math.min((currentScore / targetScore) * 100, 100);
+  const progressPercent = targetScore > 0 ? Math.min((currentScore / targetScore) * 100, 100) : 0;
   const [showPointsPopup, setShowPointsPopup] = useState(false);
 
   useEffect(() => {
@@ -78,60 +83,71 @@ export default function TopBar({
     <>
       {goalReached && <Confetti />}
 
-      <div className="bg-gradient-to-r from-slate-800 via-slate-800 to-slate-700 rounded-xl p-5 border border-slate-700/50" role="status" aria-live="polite">
+      <header className="rounded-lg border border-blue-500/40 bg-blue-950/70 p-5 shadow-xl" role="status" aria-live="polite">
         {goalReached && (
-          <div className="mb-4 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-900 px-6 py-4 rounded-lg font-bold text-center text-2xl">
-            MÅL NÅTT! Grattis alla!
+          <div className="mb-4 rounded-md bg-yellow-300 px-6 py-4 text-center text-2xl font-black text-slate-950">
+            Poängmålet är nått. Alla klarade spelet tillsammans.
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4">
-          <div className="text-center relative">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Nuvarande poäng</div>
-            <div className="text-3xl lg:text-4xl font-bold text-white" aria-label={`${currentScore} poäng`}>{currentScore}</div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
+          <div className="relative text-center">
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Poäng</div>
+            <div className="text-4xl font-black text-white" aria-label={`${currentScore} poäng`}>
+              {currentScore}
+            </div>
             {showPointsPopup && lastPointsAdded && (
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-emerald-400 font-bold text-lg animate-bounce">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 animate-bounce text-lg font-black text-yellow-200">
                 +{lastPointsAdded}
               </div>
             )}
           </div>
           <div className="text-center">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Målpoäng</div>
-            <div className="text-3xl lg:text-4xl font-bold text-blue-400" aria-label={`Mål: ${targetScore} poäng`}>{targetScore}</div>
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Mål</div>
+            <div className="text-4xl font-black text-yellow-100" aria-label={`Mål: ${targetScore} poäng`}>
+              {targetScore}
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Poäng kvar</div>
-            <div className="text-3xl lg:text-4xl font-bold text-amber-400" aria-label={`${remainingScore} poäng kvar`}>{remainingScore}</div>
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Kvar</div>
+            <div className="text-4xl font-black text-amber-200" aria-label={`${remainingScore} poäng kvar`}>
+              {remainingScore}
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Runda</div>
-            <div className="text-3xl lg:text-4xl font-bold text-white" aria-label={`Runda ${roundCount}`}>{roundCount}</div>
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Runda</div>
+            <div className="text-4xl font-black text-white" aria-label={`Runda ${roundCount}`}>
+              {roundCount}
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Senaste presenter</div>
-            <div className="text-lg lg:text-xl font-semibold text-slate-200 truncate" aria-label={lastPresenter ? `Senaste presenter: ${lastPresenter}` : 'Ingen presenter ännu'}>
-              {lastPresenter || '—'}
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Klara rutor</div>
+            <div className="text-4xl font-black text-white" aria-label={`${completedCount} av ${totalTiles} rutor klara`}>
+              {completedCount}/{totalTiles}
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Senast presenterade</div>
+            <div className="truncate text-xl font-bold text-white" aria-label={lastPresenter ? `Senast presenterade: ${lastPresenter}` : 'Ingen presentation ännu'}>
+              {lastPresenter || '-'}
             </div>
           </div>
         </div>
 
         <div
-          className="w-full bg-slate-600/50 rounded-full h-3 overflow-hidden"
+          className="mt-5 h-4 w-full overflow-hidden rounded-full bg-blue-900"
           role="progressbar"
           aria-valuenow={currentScore}
           aria-valuemin={0}
           aria-valuemax={targetScore}
-          aria-label={`Framsteg: ${Math.round(progressPercent)}%`}
+          aria-label={`Framsteg: ${Math.round(progressPercent)} procent`}
         >
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{
-              width: `${progressPercent}%`,
-              background: `linear-gradient(90deg, #10b981 ${0}%, #3b82f6 ${50}%, #8b5cf6 ${100}%)`,
-            }}
+            className="h-full rounded-full bg-gradient-to-r from-yellow-300 via-emerald-300 to-cyan-300 transition-all duration-500 ease-out"
+            style={{ width: `${progressPercent}%` }}
           />
         </div>
-      </div>
+      </header>
     </>
   );
 }
