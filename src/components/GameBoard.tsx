@@ -37,7 +37,7 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
         onClick={() => onSelectTile(tile.id)}
         disabled={isCompleted && !isActive}
         className={`
-          relative rounded-lg p-3 text-left border transition-all w-full
+          relative rounded-lg border transition-all w-full
           ${getCategoryStyles(tile.category, isCompleted, isActive)}
           ${isClickable ? 'cursor-pointer active:scale-95' : ''}
           ${isCompleted && !isActive ? 'cursor-default' : ''}
@@ -46,29 +46,39 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          aspectRatio: '1 / 1.2',
-          minHeight: '200px',
+          justifyContent: 'center',
+          alignItems: 'center',
+          aspectRatio: '1 / 1.1',
         }}
       >
-        {/* Points display - top */}
-        <div className={`text-3xl font-bold text-right ${
-          isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
-        }`}>
-          {tile.points}
-        </div>
-
-        {/* Title - main content, centered */}
-        <div className={`text-base leading-snug font-semibold flex items-center justify-center text-center flex-1 ${
-          isCompleted ? 'text-slate-500 line-through' : isActive ? 'text-white' : 'text-white/90'
-        }`} style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden',
-        }}>
-          {tile.title}
-        </div>
+        {/* Show only points by default, show text when active/completed */}
+        {isActive || isCompleted ? (
+          <>
+            {/* Title - when active/completed */}
+            <div className={`px-3 py-2 text-center leading-snug font-semibold flex items-center justify-center h-full ${
+              isCompleted ? 'text-slate-500 line-through' : 'text-white'
+            }`} style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 4,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+            }}>
+              {tile.title}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Points only - default state */}
+            <div className={`text-4xl font-bold text-center ${
+              isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
+            }`} style={{
+              fontSize: 'clamp(2rem, 5vw, 4rem)',
+            }}>
+              {tile.points}
+            </div>
+          </>
+        )}
 
         {/* Status indicator - bottom right */}
         {isCompleted && (
@@ -108,16 +118,16 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '1rem',
+        gap: '0.75rem',
       }}>
         {categories.map((category) => (
           <div key={category} style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem',
+            gap: '0.75rem',
           }}>
             {/* Category header */}
-            <div className={`px-4 py-3 rounded-lg text-center font-bold text-white text-sm ${
+            <div className={`px-4 py-2 rounded-lg text-center font-bold text-white text-sm ${
               category === 'Grund' ? 'bg-emerald-600/40' :
               category === 'Fördjupning' ? 'bg-blue-600/40' :
               'bg-violet-600/40'
@@ -129,7 +139,8 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '1rem',
+              gap: '0.75rem',
+              flex: 1,
             }}>
               {getTilesByCategory(category).map((tile) => (
                 <TileButton key={tile.id} tile={tile} />
