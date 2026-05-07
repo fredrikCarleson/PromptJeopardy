@@ -48,7 +48,8 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          aspectRatio: '1 / 1.1',
+          aspectRatio: '1 / 1.3',
+          minHeight: '100px',
         }}
       >
         {/* Show only points by default, show text when active/completed */}
@@ -118,7 +119,9 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '0.75rem',
+        gap: '0.5rem',
+        maxHeight: 'calc(100vh - 300px)',
+        overflow: 'auto',
       }}>
         {categories.map((category) => (
           <div key={category} style={{
@@ -127,7 +130,7 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
             gap: '0.75rem',
           }}>
             {/* Category header */}
-            <div className={`px-4 py-2 rounded-lg text-center font-bold text-white text-sm ${
+            <div className={`px-3 py-1.5 rounded-lg text-center font-bold text-white text-xs ${
               category === 'Grund' ? 'bg-emerald-600/40' :
               category === 'Fördjupning' ? 'bg-blue-600/40' :
               'bg-violet-600/40'
@@ -139,7 +142,7 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.75rem',
+              gap: '0.5rem',
               flex: 1,
             }}>
               {getTilesByCategory(category).map((tile) => (
