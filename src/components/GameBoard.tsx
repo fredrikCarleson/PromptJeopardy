@@ -37,22 +37,29 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
         onClick={() => onSelectTile(tile.id)}
         disabled={isCompleted && !isActive}
         className={`
-          relative rounded-lg p-3 lg:p-4 text-left border transition-all
+          relative rounded-lg p-3 text-left border transition-all w-full
           ${getCategoryStyles(tile.category, isCompleted, isActive)}
           ${isClickable ? 'cursor-pointer active:scale-95' : ''}
           ${isCompleted && !isActive ? 'cursor-default' : ''}
           ${!isClickable && !isCompleted ? 'cursor-pointer' : ''}
         `}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          aspectRatio: '1 / 1.2',
+          minHeight: '200px',
+        }}
       >
         {/* Points display - top */}
-        <div className={`text-3xl lg:text-4xl font-bold text-right mb-3 ${
+        <div className={`text-3xl font-bold text-right ${
           isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
         }`}>
           {tile.points}
         </div>
 
-        {/* Title - main content, centered vertically */}
-        <div className={`text-sm lg:text-base xl:text-lg leading-snug font-semibold min-h-12 lg:min-h-16 flex items-center justify-center text-center ${
+        {/* Title - main content, centered */}
+        <div className={`text-base leading-snug font-semibold flex items-center justify-center text-center flex-1 ${
           isCompleted ? 'text-slate-500 line-through' : isActive ? 'text-white' : 'text-white/90'
         }`} style={{
           display: '-webkit-box',
@@ -65,7 +72,7 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
 
         {/* Status indicator - bottom right */}
         {isCompleted && (
-          <div className="absolute bottom-2 right-2 w-5 h-5 bg-slate-600 rounded-full flex items-center justify-center">
+          <div className="absolute bottom-2 right-2 w-5 h-5 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
             <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
@@ -74,16 +81,16 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
 
         {/* Active pulse - bottom left */}
         {isActive && (
-          <div className="absolute bottom-2 left-2 w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
+          <div className="absolute bottom-2 left-2 w-3 h-3 bg-yellow-400 rounded-full animate-pulse flex-shrink-0" />
         )}
       </button>
     );
   };
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-4 lg:p-6 border border-slate-700/50">
+    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
       <div className="mb-6">
-        <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">Spelbräde</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Spelbräde</h2>
         <div className="flex flex-wrap gap-3 text-sm">
           <span className="flex items-center gap-2">
             <span className="w-4 h-4 rounded-sm bg-emerald-500" /> Grund
@@ -98,11 +105,19 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
       </div>
 
       {/* Jeopardy-style grid: 3 columns (one per category) */}
-      <div className="grid grid-cols-3 gap-3 lg:gap-4 auto-rows-max">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '1rem',
+      }}>
         {categories.map((category) => (
-          <div key={category} className="flex flex-col gap-3 lg:gap-4">
+          <div key={category} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+          }}>
             {/* Category header */}
-            <div className={`px-4 py-3 rounded-lg text-center font-bold text-white text-sm lg:text-base ${
+            <div className={`px-4 py-3 rounded-lg text-center font-bold text-white text-sm ${
               category === 'Grund' ? 'bg-emerald-600/40' :
               category === 'Fördjupning' ? 'bg-blue-600/40' :
               'bg-violet-600/40'
@@ -111,11 +126,13 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
             </div>
 
             {/* Tiles in this category, sorted by points */}
-            <div className="flex flex-col gap-3 lg:gap-4">
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}>
               {getTilesByCategory(category).map((tile) => (
-                <div key={tile.id} className="h-32 lg:h-40">
-                  <TileButton tile={tile} />
-                </div>
+                <TileButton key={tile.id} tile={tile} />
               ))}
             </div>
           </div>
