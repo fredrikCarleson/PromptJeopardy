@@ -16,7 +16,8 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
   const getTilesByCategory = (category: TileCategory) => {
     return tiles
       .filter((t) => t.category === category)
-      .sort((a, b) => a.points - b.points);
+      .sort((a, b) => a.points - b.points)
+      .slice(0, 1);
   };
 
   const getCategoryStyles = (category: TileCategory, isCompleted: boolean, isActive: boolean): string => {
@@ -120,8 +121,6 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '0.5rem',
-        maxHeight: 'calc(100vh - 300px)',
-        overflow: 'auto',
       }}>
         {categories.map((category) => (
           <div key={category} style={{
