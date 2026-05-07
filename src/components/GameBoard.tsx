@@ -37,27 +37,26 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
         onClick={() => onSelectTile(tile.id)}
         disabled={isCompleted && !isActive}
         className={`
-          relative rounded-lg p-3 lg:p-4 text-left border transition-all h-full
+          relative rounded-lg p-3 lg:p-4 text-left border transition-all
           ${getCategoryStyles(tile.category, isCompleted, isActive)}
           ${isClickable ? 'cursor-pointer active:scale-95' : ''}
           ${isCompleted && !isActive ? 'cursor-default' : ''}
           ${!isClickable && !isCompleted ? 'cursor-pointer' : ''}
-          flex flex-col justify-between
         `}
       >
         {/* Points display - top */}
-        <div className={`text-3xl lg:text-4xl font-bold text-right mb-2 ${
+        <div className={`text-3xl lg:text-4xl font-bold text-right mb-3 ${
           isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
         }`}>
           {tile.points}
         </div>
 
-        {/* Title - center/main content */}
-        <div className={`text-sm lg:text-base xl:text-lg leading-snug font-semibold flex-1 flex items-center ${
+        {/* Title - main content, centered vertically */}
+        <div className={`text-sm lg:text-base xl:text-lg leading-snug font-semibold min-h-12 lg:min-h-16 flex items-center justify-center text-center ${
           isCompleted ? 'text-slate-500 line-through' : isActive ? 'text-white' : 'text-white/90'
         }`} style={{
           display: '-webkit-box',
-          WebkitLineClamp: 4,
+          WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical',
           overflow: 'hidden',
         }}>
@@ -99,9 +98,9 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
       </div>
 
       {/* Jeopardy-style grid: 3 columns (one per category) */}
-      <div className="grid grid-cols-3 gap-2 lg:gap-4">
+      <div className="grid grid-cols-3 gap-3 lg:gap-4 auto-rows-max">
         {categories.map((category) => (
-          <div key={category} className="flex flex-col gap-2 lg:gap-3">
+          <div key={category} className="flex flex-col gap-3 lg:gap-4">
             {/* Category header */}
             <div className={`px-4 py-3 rounded-lg text-center font-bold text-white text-sm lg:text-base ${
               category === 'Grund' ? 'bg-emerald-600/40' :
@@ -112,9 +111,9 @@ export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhas
             </div>
 
             {/* Tiles in this category, sorted by points */}
-            <div className="flex flex-col gap-2 lg:gap-3 flex-1">
+            <div className="flex flex-col gap-3 lg:gap-4">
               {getTilesByCategory(category).map((tile) => (
-                <div key={tile.id} className="flex-1">
+                <div key={tile.id} className="h-32 lg:h-40">
                   <TileButton tile={tile} />
                 </div>
               ))}
