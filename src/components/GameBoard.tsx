@@ -1,4 +1,5 @@
-import { Tile, RoundPhase } from '../types';
+import { Tile, RoundPhase, TileCategory } from '../types';
+import { CATEGORY_STYLES } from '../utils/categoryStyles';
 
 interface GameBoardProps {
   tiles: Tile[];
@@ -7,115 +8,119 @@ interface GameBoardProps {
   roundPhase: RoundPhase;
 }
 
-const getCategoryStyles = (category: string, isCompleted: boolean, isActive: boolean): string => {
-  if (isCompleted) return 'bg-slate-700/40 border-slate-600/30';
-  if (isActive) return 'border-yellow-400 ring-2 ring-yellow-400/50';
-
-  switch (category) {
-    case 'Grund':
-      return 'bg-emerald-600/80 border-emerald-500/50 hover:bg-emerald-500/80 hover:border-emerald-400';
-    case 'Fördjupning':
-      return 'bg-blue-600/80 border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400';
-    case 'Skapa nytt':
-      return 'bg-violet-600/80 border-violet-500/50 hover:bg-violet-500/80 hover:border-violet-400';
-    default:
-      return 'bg-slate-600/80 border-slate-500/50';
-  }
-};
-
-const getCategoryBadge = (category: string): { text: string; className: string } => {
-  switch (category) {
-    case 'Grund':
-      return { text: 'G', className: 'bg-emerald-400/20 text-emerald-300' };
-    case 'Fördjupning':
-      return { text: 'F', className: 'bg-blue-400/20 text-blue-300' };
-    case 'Skapa nytt':
-      return { text: 'S', className: 'bg-violet-400/20 text-violet-300' };
-    default:
-      return { text: '', className: '' };
-  }
-};
-
 export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhase }: GameBoardProps) {
   const canSelect = roundPhase === 'selecting_tile' || roundPhase === 'choosing_next_tile';
 
+  const categories: TileCategory[] = ['Grund', 'Fördjupning', 'Skapa nytt'];
+
+  const getTilesByCategory = (category: TileCategory) => {
+    return tiles
+      .filter((t) => t.category === category)
+      .sort((a, b) => a.points - b.points);
+  };
+
+  const getCategoryStyles = (category: TileCategory, isCompleted: boolean, isActive: boolean): string => {
+    if (isCompleted) return 'bg-slate-700/40 border-slate-600/30';
+    if (isActive) return 'border-yellow-400 ring-2 ring-yellow-400/50';
+
+    const styles = CATEGORY_STYLES[category];
+    return styles.bgHover;
+  };
+
+  const TileButton = ({ tile }: { tile: Tile }) => {
+    const isCompleted = tile.status === 'completed';
+    const isActive = tile.id === activeTileId;
+    const isClickable = canSelect && tile.status === 'unplayed';
+
+    return (
+      <button
+        onClick={() => onSelectTile(tile.id)}
+        disabled={isCompleted && !isActive}
+        className={`
+          relative rounded-lg p-3 lg:p-4 text-left border transition-all h-full
+          ${getCategoryStyles(tile.category, isCompleted, isActive)}
+          ${isClickable ? 'cursor-pointer active:scale-95' : ''}
+          ${isCompleted && !isActive ? 'cursor-default' : ''}
+          ${!isClickable && !isCompleted ? 'cursor-pointer' : ''}
+          flex flex-col justify-between
+        `}
+      >
+        {/* Points display - top */}
+        <div className={`text-3xl lg:text-4xl font-bold text-right mb-2 ${
+          isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
+        }`}>
+          {tile.points}
+        </div>
+
+        {/* Title - center/main content */}
+        <div className={`text-sm lg:text-base xl:text-lg leading-snug font-semibold flex-1 flex items-center ${
+          isCompleted ? 'text-slate-500 line-through' : isActive ? 'text-white' : 'text-white/90'
+        }`} style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 4,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        }}>
+          {tile.title}
+        </div>
+
+        {/* Status indicator - bottom right */}
+        {isCompleted && (
+          <div className="absolute bottom-2 right-2 w-5 h-5 bg-slate-600 rounded-full flex items-center justify-center">
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          </div>
+        )}
+
+        {/* Active pulse - bottom left */}
+        {isActive && (
+          <div className="absolute bottom-2 left-2 w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
+        )}
+      </button>
+    );
+  };
+
   return (
-    <div className="bg-slate-800/50 rounded-xl p-4 lg:p-5 border border-slate-700/50">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-white">Spelbräde</h2>
-        <div className="flex gap-3 text-xs">
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm bg-emerald-500" /> Grund
+    <div className="bg-slate-800/50 rounded-xl p-4 lg:p-6 border border-slate-700/50">
+      <div className="mb-6">
+        <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">Spelbräde</h2>
+        <div className="flex flex-wrap gap-3 text-sm">
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-sm bg-emerald-500" /> Grund
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm bg-blue-500" /> Fördjupning
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-sm bg-blue-500" /> Fördjupning
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm bg-violet-500" /> Skapa nytt
+          <span className="flex items-center gap-2">
+            <span className="w-4 h-4 rounded-sm bg-violet-500" /> Skapa nytt
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-2 lg:gap-3">
-        {tiles.map((tile) => {
-          const isCompleted = tile.status === 'completed';
-          const isActive = tile.id === activeTileId;
-          const isClickable = canSelect && tile.status === 'unplayed';
-          const badge = getCategoryBadge(tile.category);
+      {/* Jeopardy-style grid: 3 columns (one per category) */}
+      <div className="grid grid-cols-3 gap-2 lg:gap-4">
+        {categories.map((category) => (
+          <div key={category} className="flex flex-col gap-2 lg:gap-3">
+            {/* Category header */}
+            <div className={`px-4 py-3 rounded-lg text-center font-bold text-white text-sm lg:text-base ${
+              category === 'Grund' ? 'bg-emerald-600/40' :
+              category === 'Fördjupning' ? 'bg-blue-600/40' :
+              'bg-violet-600/40'
+            }`}>
+              {category}
+            </div>
 
-          return (
-            <button
-              key={tile.id}
-              onClick={() => onSelectTile(tile.id)}
-              disabled={isCompleted && !isActive}
-              className={`
-                relative rounded-lg p-2.5 lg:p-3 text-left border transition-all
-                ${getCategoryStyles(tile.category, isCompleted, isActive)}
-                ${isClickable ? 'cursor-pointer active:scale-95' : ''}
-                ${isCompleted && !isActive ? 'cursor-default' : ''}
-                ${!isClickable && !isCompleted ? 'cursor-pointer' : ''}
-              `}
-            >
-              {/* Category badge */}
-              <div className="flex items-center justify-between mb-1.5">
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${badge.className}`}>
-                  {badge.text}
-                </span>
-                <span className={`text-lg lg:text-xl font-bold ${
-                  isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white/90'
-                }`}>
-                  {tile.points}
-                </span>
-              </div>
-
-              {/* Title */}
-              <div className={`text-xs lg:text-sm leading-tight font-medium ${
-                isCompleted ? 'text-slate-500 line-through' : isActive ? 'text-white' : 'text-white/80'
-              }`} style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}>
-                {tile.title}
-              </div>
-
-              {/* Status indicator */}
-              {isCompleted && (
-                <div className="absolute top-1 right-1 w-4 h-4 bg-slate-500 rounded-full flex items-center justify-center">
-                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
+            {/* Tiles in this category, sorted by points */}
+            <div className="flex flex-col gap-2 lg:gap-3 flex-1">
+              {getTilesByCategory(category).map((tile) => (
+                <div key={tile.id} className="flex-1">
+                  <TileButton tile={tile} />
                 </div>
-              )}
-
-              {/* Active pulse */}
-              {isActive && (
-                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
-              )}
-            </button>
-          );
-        })}
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
