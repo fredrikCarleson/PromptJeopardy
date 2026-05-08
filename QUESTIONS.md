@@ -1,4 +1,4 @@
-﻿# PromptJeopardy Frågor
+# PromptJeopardy Frågor
 
 Redigera den här filen när du vill ändra frågor, kategorier, poäng eller reflektionsfrågor. Be sedan Codex läsa `QUESTIONS.md` och uppdatera `src/data/tiles.ts`.
 
