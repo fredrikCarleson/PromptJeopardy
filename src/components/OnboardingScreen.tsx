@@ -1,4 +1,4 @@
-import { Play, Users, Zap, Award, BookOpen } from 'lucide-react';
+import { Award, BookOpen, Monitor, Play, Users, Wand2 } from 'lucide-react';
 
 interface OnboardingScreenProps {
   onStartSetup: () => void;
@@ -7,116 +7,91 @@ interface OnboardingScreenProps {
 
 export default function OnboardingScreen({ onStartSetup, onViewRules }: OnboardingScreenProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl space-y-8">
-        {/* Hero Section */}
-        <div className="text-center space-y-3">
-          <h1 className="text-5xl lg:text-6xl font-bold text-white">Prompt-Jeopardy</h1>
-          <p className="text-xl text-slate-300">Ett samarbetsinriktat workshop-spel</p>
-          <p className="text-sm text-slate-400">Där team samarbetar för att nå ett gemensamt poängmål</p>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 p-4 text-white">
+      <div className="w-full max-w-5xl space-y-8">
+        <div className="text-center">
+          <h1 className="text-5xl font-black tracking-normal text-yellow-100 lg:text-7xl">Prompt-Jeopardy</h1>
+          <p className="mt-4 text-xl text-slate-200">
+            Ett gemensamt Jeopardy-spel för att öva prompting med årsredovisning och klarspråk.
+          </p>
+          <p className="mt-2 text-sm text-slate-400">
+            Deltagarna arbetar i par på egna datorer. Facilitatorn styr tavlan på stor skärm.
+          </p>
         </div>
 
-        {/* How to Play Cards */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-slate-800/80 rounded-lg p-6 border border-blue-500/30 backdrop-blur">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                <Users size={20} className="text-blue-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white">Teamspel</h3>
-            </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              2-8 par arbetar tillsammans mot ett gemensamt mål. Alla team strävar efter samma poängmål på en delad spelbräde.
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-blue-500/30 bg-slate-900 p-5">
+            <Users className="mb-4 h-8 w-8 text-blue-300" />
+            <h3 className="text-lg font-bold">25 par</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Alla par arbetar samtidigt med samma valda ruta och lär av varandras promptar.
             </p>
           </div>
 
-          <div className="bg-slate-800/80 rounded-lg p-6 border border-emerald-500/30 backdrop-blur">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <Zap size={20} className="text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white">Snabb Workflow</h3>
-            </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Välj en ruta → Arbeta i par under timer → Presentera resultat → Välj nästa ruta. 4 enkla steg som upprepas.
+          <div className="rounded-lg border border-yellow-500/30 bg-slate-900 p-5">
+            <Award className="mb-4 h-8 w-8 text-yellow-200" />
+            <h3 className="text-lg font-bold">Gemensamt mål</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Gruppen tävlar tillsammans, inte mot varandra, för att nå ett realistiskt poängmål.
             </p>
           </div>
 
-          <div className="bg-slate-800/80 rounded-lg p-6 border border-amber-500/30 backdrop-blur">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <Award size={20} className="text-amber-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white">Flexibla Poäng</h3>
-            </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Varje ruta ger 100-400 poäng. Välj svårare rutor för högre belöning eller enklare för säker progression.
+          <div className="rounded-lg border border-emerald-500/30 bg-slate-900 p-5">
+            <Wand2 className="mb-4 h-8 w-8 text-emerald-300" />
+            <h3 className="text-lg font-bold">M365 + ChatGPT</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Uppgifterna passar Copilot i Word, PowerPoint, Excel, Outlook och ChatGPT 5.x.
             </p>
           </div>
 
-          <div className="bg-slate-800/80 rounded-lg p-6 border border-violet-500/30 backdrop-blur">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                <BookOpen size={20} className="text-violet-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white">AI-Prompting</h3>
-            </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Varje ruta är en AI-prompt att arbeta med. Du bestämmer själv hur du löser den — kreativitet uppmuntras!
+          <div className="rounded-lg border border-cyan-500/30 bg-slate-900 p-5">
+            <Monitor className="mb-4 h-8 w-8 text-cyan-300" />
+            <h3 className="text-lg font-bold">Muntlig redovisning</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Appen samlar inte in svar. Paret visar och beskriver resultatet från sin egen dator.
             </p>
           </div>
         </div>
 
-        {/* Quick Overview */}
-        <div className="bg-slate-800/80 rounded-lg p-6 border border-slate-700/50 backdrop-blur space-y-4">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold text-white">1</span>
-            Steg A: Välj en ruta
-          </h3>
-          <p className="text-sm text-slate-300 ml-10">Slumpa eller klicka en ospelad ruta för att starta en runda.</p>
+        <section className="rounded-lg border border-blue-500/30 bg-blue-950/40 p-6">
+          <h2 className="mb-4 text-2xl font-black text-white">Så fungerar en runda</h2>
+          <div className="grid gap-4 md:grid-cols-4">
+            {[
+              ['1', 'Slumpa eller välj ruta', 'Första rutan slumpas. Senare kan presenterande par välja nästa.'],
+              ['2', 'Arbeta i par', 'Alla använder en vald del av årsredovisningen, inte hela rapporten.'],
+              ['3', 'Redovisa muntligt', 'Ett par slumpas och visar resultatet från sin egen dator.'],
+              ['4', 'Lägg till poäng', 'Rutan låses, poängen läggs till och nästa runda börjar.'],
+            ].map(([number, title, body]) => (
+              <div key={number} className="rounded-md bg-slate-950/50 p-4">
+                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-300 font-black text-slate-950">
+                  {number}
+                </div>
+                <h3 className="font-bold text-white">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2 mt-5">
-            <span className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-sm font-bold text-white">2</span>
-            Steg B: Arbeta i par
-          </h3>
-          <p className="text-sm text-slate-300 ml-10">Teamet arbetar tillsammans på uppgiften under en timer (ofta 5-10 minuter). Gärna med AI-hjälp!</p>
-
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2 mt-5">
-            <span className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-sm font-bold text-white">3</span>
-            Steg C: Presentera
-          </h3>
-          <p className="text-sm text-slate-300 ml-10">Ett par presenterar vad de gjorde, vad som gick snett, och hur de löste det.</p>
-
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2 mt-5">
-            <span className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-sm font-bold text-white">4</span>
-            Steg D: Nästa ruta
-          </h3>
-          <p className="text-sm text-slate-300 ml-10">Nästa par väljer nästa ruta. Processen upprepa tills poängmål nås!</p>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
+            type="button"
             onClick={onStartSetup}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold py-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-lg"
+            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-blue-600 py-4 text-lg font-bold text-white transition-colors hover:bg-blue-500"
           >
             <Play size={22} />
             Starta spel
           </button>
           <button
+            type="button"
             onClick={onViewRules}
-            className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg"
+            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-800 py-4 text-lg font-bold text-white transition-colors hover:bg-slate-700"
           >
             <BookOpen size={22} />
             Läs regler
           </button>
         </div>
-
-        {/* Footer */}
-        <div className="text-center text-xs text-slate-500">
-          Spelet sparas automatiskt. Du kan gå från spelet och komma tillbaka senare.
-        </div>
       </div>
-    </div>
+    </main>
   );
 }

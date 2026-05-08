@@ -1,156 +1,113 @@
-import { Tile, RoundPhase, TileCategory } from '../types';
-import { CATEGORY_STYLES } from '../utils/categoryStyles';
+import { CheckCircle } from 'lucide-react';
+import { PointValue, RoundPhase, Tile } from '../types';
+import { TOPIC_LABELS, TOPICS } from '../data/tiles';
+import { TOPIC_STYLES } from '../utils/categoryStyles';
 
 interface GameBoardProps {
   tiles: Tile[];
   onSelectTile: (tileId: number) => void;
   activeTileId: number | null;
   roundPhase: RoundPhase;
+  manualSelectionEnabled: boolean;
 }
 
-export default function GameBoard({ tiles, onSelectTile, activeTileId, roundPhase }: GameBoardProps) {
-  const canSelect = roundPhase === 'selecting_tile' || roundPhase === 'choosing_next_tile';
+const POINT_ROWS: PointValue[] = [100, 200, 300, 400, 500];
 
-  const categories: TileCategory[] = ['Grund', 'Fördjupning', 'Skapa nytt'];
+export default function GameBoard({
+  tiles,
+  onSelectTile,
+  activeTileId,
+  roundPhase,
+  manualSelectionEnabled,
+}: GameBoardProps) {
+  const canSelect = roundPhase === 'selecting_tile' && manualSelectionEnabled;
 
-  const getTilesByCategory = (category: TileCategory) => {
-    return tiles
-      .filter((t) => t.category === category)
-      .sort((a, b) => a.points - b.points)
-      .slice(0, 1);
-  };
-
-  const getCategoryStyles = (category: TileCategory, isCompleted: boolean, isActive: boolean): string => {
-    if (isCompleted) return 'bg-slate-700/40 border-slate-600/30';
-    if (isActive) return 'border-yellow-400 ring-2 ring-yellow-400/50';
-
-    const styles = CATEGORY_STYLES[category];
-    return styles.bgHover;
-  };
+  const getTile = (topic: Tile['topic'], points: PointValue) =>
+    tiles.find((tile) => tile.topic === topic && tile.points === points);
 
   const TileButton = ({ tile }: { tile: Tile }) => {
     const isCompleted = tile.status === 'completed';
     const isActive = tile.id === activeTileId;
-    const isClickable = canSelect && tile.status === 'unplayed';
+    const isSelectable = canSelect && tile.status === 'unplayed';
+    const canOpenActive = isActive && tile.status === 'active';
+    const styles = TOPIC_STYLES[tile.topic];
 
     return (
       <button
-        onClick={() => onSelectTile(tile.id)}
-        disabled={isCompleted && !isActive}
-        className={`
-          relative rounded-lg border transition-all w-full
-          ${getCategoryStyles(tile.category, isCompleted, isActive)}
-          ${isClickable ? 'cursor-pointer active:scale-95' : ''}
-          ${isCompleted && !isActive ? 'cursor-default' : ''}
-          ${!isClickable && !isCompleted ? 'cursor-pointer' : ''}
-        `}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          aspectRatio: '1 / 1.3',
-          minHeight: '100px',
+        type="button"
+        onClick={() => {
+          if (isSelectable || canOpenActive) onSelectTile(tile.id);
         }}
+        disabled={!isSelectable && !canOpenActive}
+        aria-label={
+          isCompleted
+            ? `${TOPIC_LABELS[tile.topic]} ${tile.points} poäng, klar: ${tile.title}`
+            : isActive
+              ? `${TOPIC_LABELS[tile.topic]} ${tile.points} poäng, aktiv: ${tile.title}`
+              : `${TOPIC_LABELS[tile.topic]} ${tile.points} poäng`
+        }
+        className={[
+          'relative flex min-h-[92px] w-full flex-col items-center justify-center rounded-md border-2 p-2 text-center shadow-lg transition-all',
+          isActive ? `${styles.active} ring-4` : '',
+          isCompleted ? `${styles.completed}` : '',
+          !isActive && !isCompleted ? `${styles.tile}` : '',
+          isSelectable ? 'cursor-pointer hover:-translate-y-0.5 active:translate-y-0' : 'cursor-default',
+          !isSelectable && !canOpenActive ? 'disabled:opacity-100' : '',
+        ].join(' ')}
       >
-        {/* Show only points by default, show text when active/completed */}
-        {isActive || isCompleted ? (
+        {isCompleted ? (
           <>
-            {/* Title - when active/completed */}
-            <div className={`px-3 py-2 text-center leading-snug font-semibold flex items-center justify-center h-full ${
-              isCompleted ? 'text-slate-500 line-through' : 'text-white'
-            }`} style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 4,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
-            }}>
-              {tile.title}
-            </div>
+            <CheckCircle className="absolute right-2 top-2 h-4 w-4 opacity-80" />
+            <span className="line-clamp-3 text-xs font-semibold leading-tight">{tile.shortLabel}</span>
+            <span className="mt-1 text-[11px] font-bold opacity-70">{tile.points}</span>
+          </>
+        ) : isActive ? (
+          <>
+            <span className="text-[11px] font-black uppercase tracking-wider">Vald ruta</span>
+            <span className="mt-1 line-clamp-2 text-sm font-bold leading-tight">{tile.shortLabel}</span>
           </>
         ) : (
-          <>
-            {/* Points only - default state */}
-            <div className={`text-4xl font-bold text-center ${
-              isCompleted ? 'text-slate-500' : isActive ? 'text-yellow-300' : 'text-white'
-            }`} style={{
-              fontSize: 'clamp(2rem, 5vw, 4rem)',
-            }}>
-              {tile.points}
-            </div>
-          </>
-        )}
-
-        {/* Status indicator - bottom right */}
-        {isCompleted && (
-          <div className="absolute bottom-2 right-2 w-5 h-5 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-        )}
-
-        {/* Active pulse - bottom left */}
-        {isActive && (
-          <div className="absolute bottom-2 left-2 w-3 h-3 bg-yellow-400 rounded-full animate-pulse flex-shrink-0" />
+          <span className="text-3xl font-black tracking-normal text-yellow-100 drop-shadow sm:text-4xl">
+            {tile.points}
+          </span>
         )}
       </button>
     );
   };
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Spelbräde</h2>
-        <div className="flex flex-wrap gap-3 text-sm">
-          <span className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-sm bg-emerald-500" /> Grund
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-sm bg-blue-500" /> Fördjupning
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-sm bg-violet-500" /> Skapa nytt
-          </span>
+    <section className="rounded-lg border border-blue-500/40 bg-blue-950/60 p-3 shadow-2xl shadow-black/30">
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-black uppercase tracking-normal text-yellow-100">Prompt-Jeopardy</h2>
+          <p className="text-sm text-blue-100/80">
+            Välj poängruta. Uppgiften är dold tills rutan väljs.
+          </p>
         </div>
+        {!manualSelectionEnabled && (
+          <div className="rounded-md border border-yellow-300/40 bg-yellow-300/10 px-3 py-2 text-sm font-semibold text-yellow-100">
+            Första rutan slumpas
+          </div>
+        )}
       </div>
 
-      {/* Jeopardy-style grid: 3 columns (one per category) */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '0.5rem',
-      }}>
-        {categories.map((category) => (
-          <div key={category} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.75rem',
-          }}>
-            {/* Category header */}
-            <div className={`px-3 py-1.5 rounded-lg text-center font-bold text-white text-xs ${
-              category === 'Grund' ? 'bg-emerald-600/40' :
-              category === 'Fördjupning' ? 'bg-blue-600/40' :
-              'bg-violet-600/40'
-            }`}>
-              {category}
-            </div>
-
-            {/* Tiles in this category, sorted by points */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-              flex: 1,
-            }}>
-              {getTilesByCategory(category).map((tile) => (
-                <TileButton key={tile.id} tile={tile} />
-              ))}
-            </div>
+      <div className="grid grid-cols-5 gap-2">
+        {TOPICS.map((topic) => (
+          <div
+            key={topic}
+            className={`flex min-h-[58px] items-center justify-center rounded-md border px-2 py-3 text-center text-xs font-black uppercase leading-tight tracking-normal sm:text-sm ${TOPIC_STYLES[topic].header}`}
+          >
+            {TOPIC_LABELS[topic]}
           </div>
         ))}
+
+        {POINT_ROWS.map((points) =>
+          TOPICS.map((topic) => {
+            const tile = getTile(topic, points);
+            return tile ? <TileButton key={tile.id} tile={tile} /> : <div key={`${topic}-${points}`} />;
+          })
+        )}
       </div>
-    </div>
+    </section>
   );
 }

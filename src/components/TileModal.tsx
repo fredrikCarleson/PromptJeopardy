@@ -1,102 +1,86 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Tile, TileStatus } from '../types';
-import { CATEGORY_STYLES, CATEGORY_COLOR_MAP } from '../utils/categoryStyles';
+import { Tile } from '../types';
+import { TOPIC_LABELS } from '../data/tiles';
+import { TOPIC_STYLES } from '../utils/categoryStyles';
 
 interface TileModalProps {
   tile: Tile;
-  onSetActive: () => void;
-  onMarkComplete: () => void;
   onClose: () => void;
-  canMarkComplete: boolean;
-  canSetActive: boolean;
 }
 
-const getStatusLabel = (status: TileStatus): { text: string; className: string } => {
-  switch (status) {
-    case 'completed':
-      return { text: 'Klar', className: 'bg-slate-600 text-slate-300' };
-    case 'active':
-      return { text: 'Aktiv', className: 'bg-amber-600 text-white' };
-    case 'unplayed':
-      return { text: 'Ospelad', className: 'bg-slate-600 text-slate-300' };
-  }
-};
-
-export default function TileModal({
-  tile,
-  onSetActive,
-  onMarkComplete,
-  onClose,
-  canMarkComplete,
-  canSetActive,
-}: TileModalProps) {
-  const status = getStatusLabel(tile.status);
-
+export default function TileModal({ tile, onClose }: TileModalProps) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50" onClick={onClose} role="dialog" aria-modal="true" aria-label={`Uppgift: ${tile.title}`}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Uppgift: ${tile.title}`}
+    >
       <div
-        className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full border border-slate-600 overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+        className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-lg border border-slate-600 bg-slate-900 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-5 border-b border-slate-700 bg-slate-750">
-          <h2 className="text-xl font-bold text-white">Uppgiftsdetaljer</h2>
+        <div className="flex items-center justify-between border-b border-slate-700 p-5">
+          <div>
+            <h2 className="text-xl font-bold text-white">{tile.title}</h2>
+            <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold">
+              <span className={`rounded border px-2 py-1 ${TOPIC_STYLES[tile.topic].badge}`}>
+                {TOPIC_LABELS[tile.topic]}
+              </span>
+              <span className="rounded border border-yellow-300/40 bg-yellow-300/10 px-2 py-1 text-yellow-100">
+                {tile.points} poäng
+              </span>
+              <span className="rounded border border-slate-500/40 bg-slate-700 px-2 py-1 text-slate-100">
+                {tile.toolFocus} · {tile.appFocus}
+              </span>
+            </div>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1"
+            className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+            aria-label="Stäng"
           >
             <X size={22} />
           </button>
         </div>
 
-        <div className="p-6 space-y-5">
-          <div>
-            <h3 className="text-lg font-semibold text-white leading-snug mb-2">{tile.title}</h3>
-            <p className="text-sm text-slate-400">{CATEGORY_STYLES[tile.category].description}</p>
-          </div>
+        <div className="space-y-5 p-6">
+          <section>
+            <h3 className="mb-2 text-sm font-bold uppercase text-slate-400">Uppgift</h3>
+            <p className="text-base leading-relaxed text-slate-100">{tile.task}</p>
+          </section>
 
-          <div className="flex flex-wrap gap-3">
-            <div className={`px-3 py-1.5 rounded-md font-semibold text-sm ${CATEGORY_COLOR_MAP[tile.category]}`}>
-              {tile.category}
-            </div>
-            <div className="px-3 py-1.5 rounded-md font-semibold text-sm bg-amber-600 text-white">
-              {tile.points} poäng
-            </div>
-            <div className={`px-3 py-1.5 rounded-md font-semibold text-sm ${status.className}`}>
-              {status.text}
-            </div>
-          </div>
+          <section className="rounded-md border border-slate-700 bg-slate-950/60 p-4">
+            <h3 className="mb-2 text-sm font-bold uppercase text-slate-400">Avgränsa källan</h3>
+            <p className="text-sm leading-relaxed text-slate-200">{tile.sourceInstruction}</p>
+          </section>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={onSetActive}
-              disabled={!canSetActive}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed"
-            >
-              Sätt som aktiv ruta
-            </button>
-            <button
-              onClick={onMarkComplete}
-              disabled={!canMarkComplete}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed"
-            >
-              Markera klar
-            </button>
-            <button
-              onClick={onClose}
-              className="flex-1 bg-slate-600 hover:bg-slate-500 text-white font-semibold py-2.5 rounded-lg transition-colors"
-            >
-              Avbryt
-            </button>
-          </div>
+          <section>
+            <h3 className="mb-2 text-sm font-bold uppercase text-slate-400">Lärandemål</h3>
+            <p className="text-sm leading-relaxed text-slate-200">{tile.learningGoal}</p>
+          </section>
+
+          <section>
+            <h3 className="mb-2 text-sm font-bold uppercase text-slate-400">Muntlig reflektion</h3>
+            <ul className="space-y-2">
+              {tile.verbalPresentationPrompt.map((prompt) => (
+                <li key={prompt} className="rounded-md bg-slate-800 p-3 text-sm text-slate-100">
+                  {prompt}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </div>
     </div>
