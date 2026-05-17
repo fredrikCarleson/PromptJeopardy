@@ -3,11 +3,13 @@ import { CheckCircle, Pause, Play } from 'lucide-react';
 import { Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
+import { playTimerWarning } from '../utils/soundEffects';
 
 interface PresentationScreenProps {
   pairName: string;
   activeTile: Tile | undefined;
   durationSeconds: number;
+  soundEnabled: boolean;
   onFinish: () => void;
 }
 
@@ -15,6 +17,7 @@ export default function PresentationScreen({
   pairName,
   activeTile,
   durationSeconds,
+  soundEnabled,
   onFinish,
 }: PresentationScreenProps) {
   const [timeRemaining, setTimeRemaining] = useState(durationSeconds);
@@ -46,6 +49,12 @@ export default function PresentationScreen({
     }, 1000);
     return () => clearInterval(timer);
   }, [isRunning, timeRemaining]);
+
+  useEffect(() => {
+    if (soundEnabled && timeRemaining === 10) {
+      playTimerWarning();
+    }
+  }, [soundEnabled, timeRemaining]);
 
   return (
     <div

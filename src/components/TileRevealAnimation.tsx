@@ -2,51 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { TOPIC_LABELS } from '../data/tiles';
 import { Tile } from '../types';
 import { TOPIC_STYLES } from '../utils/categoryStyles';
+import { playSelectionTick, playTileReveal } from '../utils/soundEffects';
 
 interface TileRevealAnimationProps {
   tiles: Tile[];
   targetTile: Tile;
+  soundEnabled: boolean;
   onComplete: () => void;
 }
 
-function playTickSound(frequency: number, duration: number, volume: number) {
-  try {
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = frequency;
-    osc.type = 'sine';
-    gain.gain.value = volume;
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
-    osc.start();
-    osc.stop(ctx.currentTime + duration / 1000);
-  } catch {
-    // Audio is optional.
-  }
-}
-
-function playRevealSound() {
-  try {
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = 440;
-    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
-    osc.type = 'triangle';
-    gain.gain.value = 0.16;
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.7);
-  } catch {
-    // Audio is optional.
-  }
-}
-
-export default function TileRevealAnimation({ tiles, targetTile, onComplete }: TileRevealAnimationProps) {
+export default function TileRevealAnimation({ tiles, targetTile, soundEnabled, onComplete }: TileRevealAnimationProps) {
   const [phase, setPhase] = useState<'spinning' | 'reveal' | 'done'>('spinning');
   const [highlightedIds, setHighlightedIds] = useState<Set<number>>(new Set());
   const [stepIndex, setStepIndex] = useState(0);
@@ -78,20 +43,20 @@ export default function TileRevealAnimation({ tiles, targetTile, onComplete }: T
 
     if (stepIndex >= sequenceRef.current.length) {
       setPhase('reveal');
-      playRevealSound();
+      if (soundEnabled) playTileReveal();
       return;
     }
 
     const step = sequenceRef.current[stepIndex];
     setHighlightedIds(new Set(step.ids));
-    playTickSound(480 + stepIndex * 60, 0.06, 0.05);
+    if (soundEnabled) playSelectionTick(stepIndex);
 
     const timeout = setTimeout(() => {
       setStepIndex((prev) => prev + 1);
     }, step.delay);
 
     return () => clearTimeout(timeout);
-  }, [stepIndex, phase]);
+  }, [soundEnabled, stepIndex, phase]);
 
   useEffect(() => {
     if (phase !== 'reveal') return;
@@ -144,6 +109,16 @@ export default function TileRevealAnimation({ tiles, targetTile, onComplete }: T
               <h2 className="mt-4 text-4xl font-black leading-tight text-white">{targetTile.title}</h2>
               <p className="mt-5 text-lg leading-relaxed text-blue-50">{targetTile.task}</p>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                setPhase('done');
+                onComplete();
+              }}
+              className="mt-6 rounded-md bg-yellow-300 px-5 py-3 font-bold text-slate-950 transition-colors hover:bg-yellow-200"
+            >
+              Starta runda nu
+            </button>
           </div>
         )}
       </div>

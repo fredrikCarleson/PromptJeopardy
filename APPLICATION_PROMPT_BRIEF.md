@@ -8,7 +8,7 @@ PromptJeopardy is a Swedish, Jeopardy-inspired workshop game for teaching AI pro
 
 The workshop material is Skatteverket's annual report plus a Swedish plain-language/klarspråk template. The annual report is around 500 pages, so tasks must ask participants to choose a manageable part of the report: one page, one section, a short page range, one table, one chart, or one image. Tasks should not ask participants to process the full report.
 
-The app does not collect participant answers. Participants use Microsoft 365 Copilot, Copilot in Word/PowerPoint/Excel/Outlook, Copilot Chat, or ChatGPT 5.x on their own computers. A randomly selected pair verbally presents what they produced, which source excerpt they used, and how they changed their prompt.
+The app does not collect participant answers. Participants work from Microsoft 365 Copilot Chat on their own computers. Some tasks ask them to create, find, compare, or summarize Word documents, PowerPoint decks, Excel material, images, or work files they have permission to access. A randomly selected pair verbally presents what they produced, which source excerpt they used, and how they changed their prompt.
 
 ## Core Game Idea
 
@@ -19,10 +19,15 @@ PromptJeopardy should feel much closer to real Jeopardy:
 - Unplayed tiles show only points.
 - The task is hidden until a tile is selected.
 - Completed tiles remain visible, dimmed, locked, and cannot be selected again.
-- The first tile is selected randomly.
+- In `guided_workshop` mode, the facilitator can follow a recommended five-round learning path.
+- In `open_board` mode, the first tile is selected randomly.
 - Later tiles can be selected manually by the presenting pair or randomly by the facilitator.
 - All participants cooperate toward a shared perfect score instead of competing against each other.
-- For a 60-minute answer-and-presentation session, the default score target is 2100 points. The full 25-tile board is worth 7500 points, but a one-hour workshop will usually only cover about 5-6 rounds. The 2100-point target intentionally pushes participants toward some harder 400/500-point questions.
+- For a 60-minute workshop, the default guided path is five rounds worth 1700 points. The open-board fallback still uses a 2100-point target for a looser 5-6 round session.
+- Guided workshop mode also includes three short whole-room oral interludes:
+  - after guided round 2: `Vad saknas?`
+  - after guided round 3: `Förbättra prompten`
+  - after guided round 4: `Farlig detalj`
 
 ## Current Jeopardy Topics
 
@@ -41,7 +46,8 @@ Each column has 100, 200, 300, 400, and 500 point tasks.
 Each round follows this flow:
 
 1. Select tile
-   - First tile must be random.
+   - Guided workshop mode offers the next recommended round.
+   - Open-board mode starts randomly.
    - Later tiles may be chosen by the presenting pair or randomized.
 
 2. Work in pairs
@@ -81,12 +87,14 @@ Important types live in `src/types.ts`.
 
 `GameConfig` includes:
 
+- `mode`
 - `numPairs`
 - `pairNames`
 - `targetScore`
 - `timerMinutes`
 - `presentationSeconds`
 - `avoidRepeatingPresenter`
+- `plannedTileIds`
 
 Task data lives in `src/data/tiles.ts`.
 
@@ -103,7 +111,7 @@ Task data lives in `src/data/tiles.ts`.
 
 - `src/components/SetupScreen.tsx`
   - Configures number of pairs, score target, work timer, presentation timer, and presenter repeat behavior.
-  - Defaults to 2100 points for a 60-minute workshop, 7 minutes work time, and 90 seconds verbal reflection.
+  - Defaults to a guided 60-minute workshop: five recommended rounds, 1700 points, 5 minutes work time, and 75 seconds verbal reflection.
 
 - `src/components/GameScreen.tsx`
   - Main game state controller: progress, round phase, timer, random tile, random presenter, scoring, undo, reset, persistence.
@@ -112,10 +120,13 @@ Task data lives in `src/data/tiles.ts`.
   - 5x5 Jeopardy board.
 
 - `src/components/RoundFlow.tsx`
-  - Facilitator control panel for the current phase.
+  - Facilitator control panel for the current phase, including the recommended next round, prompt recipe, fallback tile swap, and post-round teaching cue.
 
 - `src/components/PresentationScreen.tsx`
   - Full-screen verbal reflection screen for the randomly selected presenter pair.
+
+- `src/components/SpecialMomentScreen.tsx`
+  - Full-screen facilitator-led oral interlude for the whole room.
 
 - `src/components/TileModal.tsx`
   - Active tile detail view.
@@ -125,6 +136,9 @@ Task data lives in `src/data/tiles.ts`.
 
 - `src/components/TopBar.tsx`
   - Shared score, target, remaining points, completed tiles, round count, latest presenter, and progress bar.
+
+- `src/data/specialMoments.ts`
+  - Authored whole-room oral interludes used by guided workshop mode.
 
 ## Persistence
 
@@ -151,4 +165,4 @@ The live game screen should prioritize the big monitor experience:
 
 ## Useful Prompt For Future Work
 
-You are working on PromptJeopardy, a Swedish React/TypeScript/Vite/Tailwind app for running a cooperative AI-prompting workshop. Participants work in pairs on their own computers using M365 Copilot and ChatGPT 5.x. The facilitator runs the app on a large monitor. The app should behave like Jeopardy: a 5x5 board, hidden tasks until selected, point values, locked completed tiles, random first tile, random presenter, and a shared perfect-score goal. Tasks are based on Skatteverket's annual report and a klarspråk template; because the annual report is around 500 pages, every task must ask participants to choose a small part of the report rather than process all of it. Preserve the manual verbal presentation model: the app shows reflection prompts and timers but does not collect answers or files.
+You are working on PromptJeopardy, a Swedish React/TypeScript/Vite/Tailwind app for running a cooperative AI-prompting workshop. Participants work in pairs on their own computers from Microsoft 365 Copilot Chat. The facilitator runs the app on a large monitor. The app should behave like Jeopardy: a 5x5 board, hidden tasks until selected, point values, locked completed tiles, a guided five-round workshop mode with short whole-room oral interludes, an optional open-board mode, random presenter selection, and a shared perfect-score goal. Tasks are based on Skatteverket's annual report and a klarspråk document; because the annual report is around 500 pages, every task must ask participants to choose a small part of the report rather than process all of it. Preserve the manual verbal presentation model: the app shows reflection prompts and timers but does not collect answers or files.

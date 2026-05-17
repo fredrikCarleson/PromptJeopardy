@@ -52,9 +52,9 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
               Arbete i par
             </h2>
             <p className="leading-relaxed text-slate-200">
-              Varje par använder sin egen dator och får använda M365 Copilot, Copilot i Word, PowerPoint, Excel, Outlook,
-              Copilot Chat eller ChatGPT 5.x beroende på uppgiften. Appen på stor skärm visar bara rutan, timer, poäng och
-              reflektionsfrågor.
+              Varje par använder sin egen dator och arbetar i Microsoft 365 Copilot Chat. Vissa uppgifter ber dem skapa,
+              hitta, jämföra eller sammanfatta material som Word-dokument, PowerPoint, Excel-tabeller, bilder eller filer
+              de har behörighet till. Appen på stor skärm visar bara rutan, timer, poäng och reflektionsfrågor.
             </p>
           </section>
 
@@ -65,7 +65,7 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
             </h2>
             <div className="grid gap-4 md:grid-cols-2">
               {[
-                ['1. Välj ruta', 'Första rutan slumpas. Senare kan presenterande par välja en ledig ruta eller be facilitatorn slumpa.'],
+                ['1. Välj ruta', 'I workshopläget följer ni en rekommenderad femrundors bana. I fri tavla slumpas första rutan och senare kan paret välja.'],
                 ['2. Arbeta', 'Alla par arbetar med samma uppgift under timern och väljer själva en relevant del av rapporten.'],
                 ['3. Redovisa', 'Ett par slumpas. De visar sitt resultat från egen dator och beskriver hur de promptade.'],
                 ['4. Poäng', 'Facilitatorn markerar rutan som klar. Den blir låst och synlig på tavlan.'],
@@ -76,6 +76,22 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className="rounded-lg border border-violet-500/30 bg-slate-900 p-6">
+            <h2 className="mb-3 text-2xl font-bold text-white">Vad ni tränar</h2>
+            <p className="leading-relaxed text-slate-200">
+              Varje prompt bör göra fem saker tydliga: roll eller målgrupp, avgränsad källa, uppgift, önskat format och
+              vad en människa fortfarande behöver kontrollera. Det är den röda tråden genom hela spelet.
+            </p>
+          </section>
+
+          <section className="rounded-lg border border-fuchsia-500/30 bg-slate-900 p-6">
+            <h2 className="mb-3 text-2xl font-bold text-white">Muntliga specialmoment</h2>
+            <p className="leading-relaxed text-slate-200">
+              I workshopläget bryts spelet av tre korta helgruppsmoment: `Vad saknas?`, `Förbättra prompten` och
+              `Farlig detalj`. De ger variation utan att kräva att deltagarna visar egna promptar.
+            </p>
           </section>
 
           <section className="rounded-lg border border-cyan-500/30 bg-slate-900 p-6">

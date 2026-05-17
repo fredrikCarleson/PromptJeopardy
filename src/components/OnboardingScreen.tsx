@@ -38,9 +38,9 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
 
           <div className="rounded-lg border border-emerald-500/30 bg-slate-900 p-5">
             <Wand2 className="mb-4 h-8 w-8 text-emerald-300" />
-            <h3 className="text-lg font-bold">M365 + ChatGPT</h3>
+            <h3 className="text-lg font-bold">Copilot Chat</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              Uppgifterna passar Copilot i Word, PowerPoint, Excel, Outlook och ChatGPT 5.x.
+              Uppgifterna tränar hur Copilot Chat använder rapporttext, arbetskontext och tydliga instruktioner.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
           <h2 className="mb-4 text-2xl font-black text-white">Så fungerar en runda</h2>
           <div className="grid gap-4 md:grid-cols-4">
             {[
-              ['1', 'Slumpa eller välj ruta', 'Första rutan slumpas. Senare kan presenterande par välja nästa.'],
+              ['1', 'Starta eller välj ruta', 'Facilitatorn startar första rundan. Senare kan paret välja eller följa banan.'],
               ['2', 'Arbeta i par', 'Alla använder en vald del av årsredovisningen, inte hela rapporten.'],
               ['3', 'Redovisa muntligt', 'Ett par slumpas och visar resultatet från sin egen dator.'],
               ['4', 'Lägg till poäng', 'Rutan låses, poängen läggs till och nästa runda börjar.'],
@@ -68,6 +68,17 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
                 </div>
                 <h3 className="font-bold text-white">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-700 bg-slate-900 p-6">
+          <h2 className="mb-3 text-xl font-black text-white">Bra promptar har fem delar</h2>
+          <div className="grid gap-3 text-sm text-slate-200 sm:grid-cols-5">
+            {['Roll', 'Källa', 'Uppgift', 'Format', 'Kontroll'].map((item) => (
+              <div key={item} className="rounded-md bg-slate-950/60 px-3 py-2 text-center font-semibold">
+                {item}
               </div>
             ))}
           </div>

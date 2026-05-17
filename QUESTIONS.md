@@ -2,14 +2,14 @@
 
 Redigera den här filen när du vill ändra frågor, kategorier, poäng eller reflektionsfrågor. Be sedan Codex läsa `QUESTIONS.md` och uppdatera `src/data/tiles.ts`.
 
-Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När en fråga handlar om Word, Excel, PowerPoint, bild eller OneDrive betyder det att deltagarna i Copilot Chat ska be Copilot skapa, hitta, jämföra eller sammanfatta materialet. De arbetar alltså från chatten, men resultatet kan vara till exempel ett Word-dokument, en PowerPoint, en Excel-tabell, en bild eller en filjämförelse.
+Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fråga handlar om Word, Excel, PowerPoint, bild eller OneDrive betyder det att deltagarna i Copilot Chat ska be Copilot skapa, hitta, jämföra eller sammanfatta materialet. De arbetar alltså från chatten, men resultatet kan vara till exempel ett Word-dokument, en PowerPoint, en Excel-tabell, en bild eller en filjämförelse.
 
 ## Förstå rapporten
 
 ### 100 poäng: Förklara en sida enkelt
 
 - Kort etikett: Enkel förklaring
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Välj en sida eller ett kort avsnitt i årsredovisningen. Be Copilot Chat förklara innehållet så att en person utan förkunskaper förstår vad Skatteverket beskriver.
 - Avgränsa källan: Använd bara en sida eller ett kort avsnitt, inte hela rapporten.
@@ -22,7 +22,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 200 poäng: Tre viktigaste insikterna
 
 - Kort etikett: Tre insikter
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Välj 2-3 sidor ur ett kapitel. Be Copilot Chat ta fram de tre viktigaste insikterna och förklara varför de är viktiga för medborgare.
 - Avgränsa källan: Välj ett kort sidintervall eller ett tydligt avsnitt.
@@ -35,7 +35,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 300 poäng: Fråga rapporten som en medborgare
 
 - Kort etikett: Medborgarfrågor
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Välj ett avsnitt som kan väcka frågor från allmänheten. Be Copilot Chat skapa fem sannolika medborgarfrågor och korta svar baserade på just den delen.
 - Avgränsa källan: Använd ett avsnitt där det finns konkret sakinformation.
@@ -48,7 +48,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 400 poäng: Hitta relaterat arbetsmaterial
 
 - Kort etikett: Sök kontext
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> OneDrive/SharePoint/Search
 - Uppgift: Be Copilot Chat hitta dokument, presentationer, mejl eller Teams-material som ni har tillgång till och som kan ge kontext till ett område i årsredovisningen, till exempel service, digitalisering, kontroll, folkbokföring eller tillgänglighet. Välj ett hittat material och be Copilot Chat förklara hur det relaterar till årsredovisningen.
 - Avgränsa källan: Använd en tydlig sökfråga och högst ett eller två dokument som Copilot hittar i er M365-miljö.
@@ -61,7 +61,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 500 poäng: Ledningsbrief från flera källor
 
 - Kort etikett: Flerkällsbrief
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> OneDrive/SharePoint
 - Uppgift: Välj ett utdrag ur årsredovisningen och komplettera med ett dokument från OneDrive eller SharePoint som ni har tillgång till. Be Copilot Chat skapa en muntlig ledningsbrief på en minut med läge, viktigaste resultat, risk och en rekommenderad följdfråga.
 - Avgränsa källan: Använd ett kort utdrag ur årsredovisningen och ett relevant internt eller delat dokument.
@@ -76,7 +76,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 100 poäng: Gör en mening begriplig med klarspråksdokumentet
 
 - Kort etikett: En mening
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> klarspråkstext
 - Uppgift: Ladda upp eller referera dokumentet med klarspråksprinciper i Copilot Chat. Välj sedan en svår mening ur årsredovisningen och be Copilot Chat skriva om den i klarspråk enligt dokumentet, utan att ändra betydelsen.
 - Avgränsa källan: Använd klarspråksdokumentet och en enda mening från årsredovisningen. Jämför före och efter.
@@ -89,7 +89,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 200 poäng: Klarspråk för ett stycke
 
 - Kort etikett: Tydligt stycke
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> klarspråkstext
 - Uppgift: Ladda upp eller referera klarspråksdokumentet i Copilot Chat. Välj ett stycke med myndighetsspråk och be Copilot Chat skriva om det i klarspråk så att det blir tydligare, kortare och mer aktivt.
 - Avgränsa källan: Använd klarspråksdokumentet och ett stycke från årsredovisningen på cirka 5-10 rader.
@@ -102,7 +102,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 300 poäng: Testa mot klarspråksdokumentet
 
 - Kort etikett: Malltest
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> klarspråksgranskning
 - Uppgift: Ladda upp eller referera klarspråksdokumentet i Copilot Chat. Välj ett avsnitt ur årsredovisningen och be Copilot Chat bedöma texten mot klarspråksdokumentet: styrkor, brister och tre konkreta förbättringsförslag.
 - Avgränsa källan: Använd ett kort avsnitt från årsredovisningen och klarspråksdokumentet som bedömningsgrund.
@@ -115,7 +115,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 400 poäng: Word-utkast i klarspråk från källfil
 
 - Kort etikett: Wordutkast
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Word-dokument
 - Uppgift: Ladda upp eller referera klarspråksdokumentet i Copilot Chat. Be Copilot Chat skapa ett Word-utkast som bygger på ett kort utdrag ur årsredovisningen: ett informationsblad i klarspråk med rubrik, ingress, tre huvudpunkter och en tydlig avslutning.
 - Avgränsa källan: Använd ett kort utdrag ur årsredovisningen och klarspråksdokumentet som språkkrav.
@@ -128,7 +128,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 500 poäng: Bygg en återanvändbar klarspråksprompt
 
 - Kort etikett: Promptmall
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Ladda upp eller referera klarspråksdokumentet och skapa en återanvändbar promptmall som alltid granskar och skriver om text i klarspråk enligt dokumentet. Testa den på ett kort avsnitt ur årsredovisningen och förbättra prompten en gång.
 - Avgränsa källan: Använd klarspråksdokumentet som permanent referens och testa på ett avgränsat avsnitt.
@@ -143,7 +143,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 100 poäng: Hitta en risk
 
 - Kort etikett: Risk
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Välj ett avsnitt som beskriver resultat, utveckling eller utmaningar. Be Copilot Chat identifiera en möjlig risk och föreslå en följdfråga.
 - Avgränsa källan: Välj ett avsnitt med någon form av utmaning eller förändring.
@@ -156,7 +156,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 200 poäng: Mini-SWOT
 
 - Kort etikett: SWOT
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
 - Uppgift: Välj 2-3 sidor och be Copilot Chat göra en mini-SWOT med en punkt per ruta: styrka, svaghet, möjlighet och hot.
 - Avgränsa källan: Välj material som innehåller både resultat och framåtblick.
@@ -169,7 +169,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 300 poäng: Jämför filer från OneDrive eller SharePoint
 
 - Kort etikett: Filjämförelse
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> OneDrive/SharePoint
 - Uppgift: Be Copilot Chat referera upp till fem filer i OneDrive eller SharePoint som ni har tillgång till, till exempel två versioner av ett dokument, en rapport och en presentation, eller flera underlag inom samma område. Be Copilot Chat jämföra dem och hitta viktigaste likheter, skillnader och möjliga konflikter.
 - Avgränsa källan: Använd högst fem filer och välj dokument som ni har rätt att använda i övningen.
@@ -182,7 +182,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 400 poäng: Kalla fakta-frågor med arbetskontext
 
 - Kort etikett: Granskning+
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> arbetskontext
 - Uppgift: Välj ett avsnitt i årsredovisningen och, om möjligt, ett relaterat internt dokument eller mejl som Copilot Chat hittar. Be Copilot Chat formulera tre granskande frågor som en journalist skulle kunna ställa, med tydlig koppling till källorna.
 - Avgränsa källan: Använd årsredovisningen plus högst ett extra arbetsmaterial.
@@ -195,7 +195,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 500 poäng: Beslutsunderlag med osäkerheter
 
 - Kort etikett: Beslutsunderlag
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> dokumentunderlag
 - Uppgift: Välj 4-6 sidor och be Copilot Chat skapa ett kort beslutsunderlag med slutsats, stöd i texten, osäkerheter och rekommenderade kontrollfrågor. Testa att även referera ett relevant dokument eller möte ni har tillgång till.
 - Avgränsa källan: Använd ett sammanhängande utdrag och högst en extra källa.
@@ -210,7 +210,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 100 poäng: Word-dokument till kollegor
 
 - Kort etikett: Word
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Word-dokument
 - Uppgift: Välj ett kort avsnitt och be Copilot Chat skapa ett Word-dokument för kollegor som sammanfattar varför avsnittet är relevant. Dokumentet ska ha rubrik, ingress, tre korta budskap och en enkel faktaruta.
 - Avgränsa källan: Använd ett kort avsnitt som går att sammanfatta på 5-7 meningar.
@@ -223,7 +223,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 200 poäng: FAQ från ett avsnitt som Word-dokument
 
 - Kort etikett: FAQ Word
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Word-dokument
 - Uppgift: Välj ett avsnitt i årsredovisningen och be Copilot Chat skapa ett Word-dokument med en FAQ för medborgare. Dokumentet ska ha rubrik, kort ingress, fem frågor och svar, samt en avslutande ruta med "Bra att veta".
 - Avgränsa källan: Använd ett avsnitt där medborgare sannolikt kan ha frågor.
@@ -236,7 +236,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 300 poäng: PowerPoint från befintlig fil
 
 - Kort etikett: PowerPoint
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> PowerPoint
 - Uppgift: Välj ett kort Word- eller PDF-underlag, till exempel ett utdrag ur årsredovisningen eller ett dokument i OneDrive. Be Copilot Chat skapa en PowerPoint med tre slides: rubrik, huvudbudskap och talarmanus.
 - Avgränsa källan: Använd en kort källfil eller ett kort utdrag som fungerar som presentationsunderlag.
@@ -249,7 +249,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 400 poäng: Workshopövning som PowerPoint
 
 - Kort etikett: Workshop PPT
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> PowerPoint
 - Uppgift: Välj ett tema eller avsnitt i årsredovisningen och be Copilot Chat skapa en PowerPoint för en 10-minuters workshopövning. Presentationen ska ha 4-5 slides: syfte, instruktion, parövning, diskussionsfrågor och avslutande lärdom.
 - Avgränsa källan: Använd ett tema eller kort avsnitt som går att diskutera i par.
@@ -262,7 +262,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 500 poäng: Skapa ett paket: bild plus PowerPoint
 
 - Kort etikett: Bild + PPT
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> bild + PowerPoint
 - Uppgift: Välj ett tydligt budskap från årsredovisningen. Be Copilot Chat först skapa en bildprompt eller bild. Be sedan Copilot Chat skapa en kort PowerPoint med tre slides: problem, insikt och rekommendation, där bilden eller bildidén används.
 - Avgränsa källan: Använd ett kort avsnitt ur årsredovisningen och en bildidé som kan förklaras muntligt.
@@ -277,7 +277,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 100 poäng: Förklara en tabell
 
 - Kort etikett: Tabell
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Excel
 - Uppgift: Välj en tabell i årsredovisningen. Be Copilot Chat förklara vad tabellen visar med tre enkla punkter och föreslå hur den skulle kunna läggas upp i Excel.
 - Avgränsa källan: Använd en enda tabell eller ett tydligt tabellutdrag.
@@ -290,7 +290,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 200 poäng: Excelbar tabell
 
 - Kort etikett: Excel
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Excel
 - Uppgift: Välj en tabell och be Copilot Chat skapa en tydlig Excel-tabell med kolumnrubriker och förslag på ett diagram.
 - Avgränsa källan: Använd en tabell som går att klistra in eller återskapa i Excel.
@@ -303,7 +303,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 300 poäng: Skapa Excel-fil
 
 - Kort etikett: Excelark
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Excel
 - Uppgift: Be Copilot Chat skapa ett nytt Excel-kalkylblad utifrån en tabell eller sifferuppställning från årsredovisningen. Be om kolumner, enkel formatering, en beräknad kolumn och ett diagramförslag.
 - Avgränsa källan: Använd en tabell eller sifferuppställning som går att återskapa manuellt i Excel.
@@ -316,7 +316,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 400 poäng: Skapa en informationsbild
 
 - Kort etikett: Informationsbild
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> bild
 - Uppgift: Välj ett budskap från ett kort avsnitt och be Copilot Chat skapa en informationsbild som kan förklara budskapet visuellt. Om bildgenerering inte finns tillgänglig, be Copilot Chat skapa en färdig bildprompt.
 - Avgränsa källan: Använd ett kort avsnitt med ett tydligt huvudbudskap.
@@ -329,7 +329,7 @@ Viktigt: deltagarna använder alltid **M365 Copilot Chat med ChatGPT 5.x**. När
 ### 500 poäng: Datainsikt med kontrollfrågor
 
 - Kort etikett: Datainsikt
-- Verktyg: M365 Copilot Chat med ChatGPT 5.x
+- Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Excel
 - Uppgift: Välj en tabell eller sifferuppställning. Be Copilot Chat hitta en möjlig insikt, skapa eller beskriva en Excel-visualisering och lista tre kontrollfrågor innan slutsatsen används.
 - Avgränsa källan: Använd en tabell eller sifferuppställning där värden kan jämföras.

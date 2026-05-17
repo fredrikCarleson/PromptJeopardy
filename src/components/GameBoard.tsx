@@ -9,6 +9,7 @@ interface GameBoardProps {
   activeTileId: number | null;
   roundPhase: RoundPhase;
   manualSelectionEnabled: boolean;
+  mode: 'guided_workshop' | 'open_board';
 }
 
 const POINT_ROWS: PointValue[] = [100, 200, 300, 400, 500];
@@ -19,6 +20,7 @@ export default function GameBoard({
   activeTileId,
   roundPhase,
   manualSelectionEnabled,
+  mode,
 }: GameBoardProps) {
   const canSelect = roundPhase === 'selecting_tile' && manualSelectionEnabled;
 
@@ -86,7 +88,7 @@ export default function GameBoard({
         </div>
         {!manualSelectionEnabled && (
           <div className="rounded-md border border-yellow-300/40 bg-yellow-300/10 px-3 py-2 text-sm font-semibold text-yellow-100">
-            Första rutan slumpas
+            {mode === 'guided_workshop' ? 'Starta från facilitatorpanelen' : 'Första rutan slumpas'}
           </div>
         )}
       </div>

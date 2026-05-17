@@ -1,3 +1,4 @@
+import { Volume2, VolumeX } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface TopBarProps {
@@ -9,6 +10,8 @@ interface TopBarProps {
   lastPresenter: string | null;
   goalReached: boolean;
   lastPointsAdded?: number;
+  soundEnabled: boolean;
+  onToggleSound: () => void;
 }
 
 function Confetti() {
@@ -66,6 +69,8 @@ export default function TopBar({
   lastPresenter,
   goalReached,
   lastPointsAdded,
+  soundEnabled,
+  onToggleSound,
 }: TopBarProps) {
   const remainingScore = Math.max(0, targetScore - currentScore);
   const progressPercent = targetScore > 0 ? Math.min((currentScore / targetScore) * 100, 100) : 0;
@@ -84,6 +89,18 @@ export default function TopBar({
       {goalReached && <Confetti />}
 
       <header className="rounded-lg border border-blue-500/40 bg-blue-950/70 p-5 shadow-xl" role="status" aria-live="polite">
+        <div className="mb-4 flex justify-end">
+          <button
+            type="button"
+            onClick={onToggleSound}
+            className="flex items-center gap-2 rounded-md bg-blue-900 px-3 py-2 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-800"
+            aria-label={soundEnabled ? 'Stäng av ljud' : 'Slå på ljud'}
+          >
+            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            {soundEnabled ? 'Ljud på' : 'Ljud av'}
+          </button>
+        </div>
+
         {goalReached && (
           <div className="mb-4 rounded-md bg-yellow-300 px-6 py-4 text-center text-2xl font-black text-slate-950">
             Poängmålet är nått. Alla klarade spelet tillsammans.

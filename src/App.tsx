@@ -4,6 +4,7 @@ import RulesScreen from './components/RulesScreen';
 import SetupScreen from './components/SetupScreen';
 import GameScreen from './components/GameScreen';
 import { GameConfig } from './types';
+import { GUIDED_WORKSHOP_TILE_IDS } from './data/tiles';
 
 type AppScreen = 'onboarding' | 'rules' | 'setup' | 'playing';
 
@@ -15,8 +16,22 @@ function App() {
     const saved = localStorage.getItem('gameConfig');
     if (saved) {
       try {
-        const parsedConfig = JSON.parse(saved);
-        setConfig(parsedConfig);
+        const parsedConfig = JSON.parse(saved) as Partial<GameConfig>;
+        const normalizedConfig: GameConfig = {
+          mode: parsedConfig.mode ?? 'guided_workshop',
+          numPairs: parsedConfig.numPairs ?? parsedConfig.pairNames?.length ?? 25,
+          pairNames:
+            parsedConfig.pairNames ??
+            Array.from({ length: parsedConfig.numPairs ?? 25 }, (_, index) => `Par ${index + 1}`),
+          targetScore: parsedConfig.targetScore ?? 1700,
+          timerMinutes: parsedConfig.timerMinutes ?? 5,
+          presentationSeconds: parsedConfig.presentationSeconds ?? 75,
+          avoidRepeatingPresenter: parsedConfig.avoidRepeatingPresenter ?? true,
+          plannedTileIds:
+            parsedConfig.plannedTileIds ??
+            (parsedConfig.mode === 'open_board' ? [] : GUIDED_WORKSHOP_TILE_IDS),
+        };
+        setConfig(normalizedConfig);
         setScreen('playing');
       } catch {
         setScreen('onboarding');

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { GameConfig, RoundPhase, Tile } from '../types';
+import { GameConfig, RoundPhase, Tile, TileStatus } from '../types';
 import { TILES } from '../data/tiles';
 import GameBoard from './GameBoard';
 import PresentationScreen from './PresentationScreen';
@@ -7,6 +7,16 @@ import RoundFlow from './RoundFlow';
 import TileModal from './TileModal';
 import TileRevealAnimation from './TileRevealAnimation';
 import TopBar from './TopBar';
+import SpecialMomentScreen from './SpecialMomentScreen';
+import { SPECIAL_MOMENTS, SpecialMoment, SpecialMomentId } from '../data/specialMoments';
+import {
+  playGoalFanfare,
+  playPresenterReveal,
+  playScoreChime,
+  playTileReveal,
+  playTimerWarning,
+  unlockAudio,
+} from '../utils/soundEffects';
 
 interface GameProgress {
   currentScore: number;
@@ -25,6 +35,17 @@ interface RoundState {
   timeRemaining: number;
 }
 
+interface StoredGameProgress {
+  currentScore: number;
+  roundCount: number;
+  tileStatuses: Record<number, TileStatus>;
+  currentActiveTileId: number | null;
+  lastPresenterIndex: number | null;
+  history: Array<{ tileId: number; points: number; presenterIndex: number | null }>;
+  roundState?: Omit<RoundState, 'timerRunning'>;
+  completedSpecialMomentIds?: SpecialMomentId[];
+}
+
 interface GameScreenProps {
   config: GameConfig;
   onResetGame: () => void;
@@ -39,43 +60,142 @@ const createInitialProgress = (): GameProgress => ({
   history: [],
 });
 
-const isSavedProgressCompatible = (value: unknown): value is GameProgress => {
+const createInitialRoundState = (timerMinutes: number): RoundState => ({
+  phase: 'selecting_tile',
+  activeTileId: null,
+  presenterIndex: null,
+  timerRunning: false,
+  timeRemaining: timerMinutes * 60,
+});
+
+const createTilesWithStatuses = (tileStatuses: Record<number, TileStatus> | undefined) =>
+  TILES.map((tile) => ({
+    ...tile,
+    status: tileStatuses?.[tile.id] ?? 'unplayed',
+  }));
+
+const isStoredProgressCompatible = (value: unknown): value is StoredGameProgress => {
+  if (!value || typeof value !== 'object') return false;
+  const progress = value as Partial<StoredGameProgress>;
+  return (
+    typeof progress.currentScore === 'number' &&
+    typeof progress.roundCount === 'number' &&
+    !!progress.tileStatuses &&
+    typeof progress.tileStatuses === 'object' &&
+    Array.isArray(progress.history)
+  );
+};
+
+const isLegacyProgressCompatible = (value: unknown): value is GameProgress => {
   if (!value || typeof value !== 'object') return false;
   const progress = value as Partial<GameProgress>;
-  return Array.isArray(progress.tiles) && progress.tiles.every((tile) => 'topic' in tile && 'task' in tile);
+  return Array.isArray(progress.tiles) && progress.tiles.every((tile) => 'id' in tile && 'status' in tile);
+};
+
+const loadInitialSession = (timerMinutes: number): { progress: GameProgress; roundState: RoundState } => {
+  const fallback = {
+    progress: createInitialProgress(),
+    roundState: createInitialRoundState(timerMinutes),
+  };
+  const saved = localStorage.getItem('gameProgress');
+  if (!saved) return fallback;
+
+  try {
+    const parsed = JSON.parse(saved);
+
+    if (isStoredProgressCompatible(parsed)) {
+      const activeTileId = parsed.currentActiveTileId;
+      const tiles = createTilesWithStatuses(parsed.tileStatuses);
+      const activeTileStillExists = activeTileId !== null && tiles.some((tile) => tile.id === activeTileId);
+      const restoredRoundState = parsed.roundState;
+
+      return {
+        progress: {
+          currentScore: parsed.currentScore,
+          roundCount: parsed.roundCount,
+          tiles,
+          currentActiveTileId: activeTileStillExists ? activeTileId : null,
+          lastPresenterIndex: parsed.lastPresenterIndex,
+          history: parsed.history,
+        },
+        roundState:
+          activeTileStillExists && restoredRoundState
+            ? {
+                ...restoredRoundState,
+                activeTileId,
+                timerRunning: false,
+              }
+            : createInitialRoundState(timerMinutes),
+      };
+    }
+
+    if (isLegacyProgressCompatible(parsed)) {
+      const tileStatuses = Object.fromEntries(parsed.tiles.map((tile) => [tile.id, tile.status]));
+      const activeTileId =
+        parsed.currentActiveTileId ??
+        parsed.tiles.find((tile) => tile.status === 'active')?.id ??
+        null;
+
+      return {
+        progress: {
+          currentScore: parsed.currentScore,
+          roundCount: parsed.roundCount,
+          tiles: createTilesWithStatuses(tileStatuses),
+          currentActiveTileId: activeTileId,
+          lastPresenterIndex: parsed.lastPresenterIndex,
+          history: parsed.history,
+        },
+        roundState:
+          activeTileId !== null
+            ? {
+                phase: 'working',
+                activeTileId,
+                presenterIndex: null,
+                timerRunning: false,
+                timeRemaining: timerMinutes * 60,
+              }
+            : createInitialRoundState(timerMinutes),
+      };
+    }
+  } catch {
+    // Ignore incompatible saved sessions from older versions.
+  }
+
+  return fallback;
 };
 
 export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   const timerMinutes = config.timerMinutes || 7;
   const presentationSeconds = config.presentationSeconds || 90;
+  const initialSessionRef = useRef<ReturnType<typeof loadInitialSession> | null>(null);
+  if (!initialSessionRef.current) {
+    initialSessionRef.current = loadInitialSession(timerMinutes);
+  }
 
-  const [progress, setProgress] = useState<GameProgress>(() => {
-    const saved = localStorage.getItem('gameProgress');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (isSavedProgressCompatible(parsed)) return parsed;
-      } catch {
-        // Ignore incompatible saved sessions from older versions.
-      }
-    }
-    return createInitialProgress();
-  });
-
-  const [roundState, setRoundState] = useState<RoundState>({
-    phase: 'selecting_tile',
-    activeTileId: null,
-    presenterIndex: null,
-    timerRunning: false,
-    timeRemaining: timerMinutes * 60,
-  });
+  const [progress, setProgress] = useState<GameProgress>(initialSessionRef.current.progress);
+  const [roundState, setRoundState] = useState<RoundState>(initialSessionRef.current.roundState);
 
   const [selectedTileForModal, setSelectedTileForModal] = useState<number | null>(null);
   const [showPresentationScreen, setShowPresentationScreen] = useState(false);
   const [goalReached, setGoalReached] = useState(progress.currentScore >= config.targetScore);
   const [revealAnimation, setRevealAnimation] = useState<{ targetTile: Tile } | null>(null);
+  const [activeSpecialMoment, setActiveSpecialMoment] = useState<SpecialMoment | null>(null);
+  const [showSpecialMomentAnswers, setShowSpecialMomentAnswers] = useState(false);
+  const [completedSpecialMomentIds, setCompletedSpecialMomentIds] = useState<SpecialMomentId[]>(() => {
+    const saved = localStorage.getItem('gameProgress');
+    if (!saved) return [];
+
+    try {
+      const parsed = JSON.parse(saved) as Partial<StoredGameProgress>;
+      return parsed.completedSpecialMomentIds ?? [];
+    } catch {
+      return [];
+    }
+  });
   const [lastPointsAdded, setLastPointsAdded] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
   const persistTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previousGoalReachedRef = useRef(goalReached);
 
   const roundStateRef = useRef(roundState);
   roundStateRef.current = roundState;
@@ -86,16 +206,42 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   useEffect(() => {
     if (persistTimeoutRef.current) clearTimeout(persistTimeoutRef.current);
     persistTimeoutRef.current = setTimeout(() => {
-      localStorage.setItem('gameProgress', JSON.stringify(progress));
+      const persistedProgress: StoredGameProgress = {
+        currentScore: progress.currentScore,
+        roundCount: progress.roundCount,
+        tileStatuses: Object.fromEntries(progress.tiles.map((tile) => [tile.id, tile.status])),
+        currentActiveTileId: progress.currentActiveTileId,
+        lastPresenterIndex: progress.lastPresenterIndex,
+        history: progress.history,
+        completedSpecialMomentIds,
+        roundState: {
+          phase: roundState.phase,
+          activeTileId: roundState.activeTileId,
+          presenterIndex: roundState.presenterIndex,
+          timeRemaining: roundState.timeRemaining,
+        },
+      };
+      localStorage.setItem('gameProgress', JSON.stringify(persistedProgress));
     }, 300);
     return () => {
       if (persistTimeoutRef.current) clearTimeout(persistTimeoutRef.current);
     };
-  }, [progress]);
+  }, [completedSpecialMomentIds, progress, roundState]);
 
   useEffect(() => {
     setGoalReached(progress.currentScore >= config.targetScore);
   }, [config.targetScore, progress.currentScore]);
+
+  useEffect(() => {
+    localStorage.setItem('soundEnabled', String(soundEnabled));
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    if (soundEnabled && !previousGoalReachedRef.current && goalReached) {
+      playGoalFanfare();
+    }
+    previousGoalReachedRef.current = goalReached;
+  }, [goalReached, soundEnabled]);
 
   useEffect(() => {
     if (!roundState.timerRunning) return;
@@ -123,11 +269,17 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   }, [roundState.phase, roundState.timeRemaining, roundState.timerRunning]);
 
   useEffect(() => {
+    if (soundEnabled && roundState.phase === 'working' && roundState.timeRemaining === 30) {
+      playTimerWarning();
+    }
+  }, [roundState.phase, roundState.timeRemaining, soundEnabled]);
+
+  useEffect(() => {
     setSelectedTileForModal(null);
   }, [roundState.phase]);
 
   const selectTile = useCallback(
-    (tileId: number, source: 'manual' | 'random' = 'manual') => {
+    (tileId: number, source: 'manual' | 'random' | 'planned' = 'manual') => {
       const tile = progressRef.current.tiles.find((candidate) => candidate.id === tileId);
       if (!tile) return;
 
@@ -135,8 +287,9 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       const isFirstRound = progressRef.current.roundCount === 0 && progressRef.current.history.length === 0;
 
       if (currentPhase === 'selecting_tile') {
-        if (isFirstRound && source !== 'random') return;
+        if (config.mode === 'open_board' && isFirstRound && source !== 'random') return;
         if (tile.status !== 'unplayed') return;
+        if (soundEnabled && source !== 'random') playTileReveal();
 
         setProgress((prev) => ({
           ...prev,
@@ -159,7 +312,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
         setSelectedTileForModal(tileId);
       }
     },
-    [timerMinutes]
+    [config.mode, soundEnabled, timerMinutes]
   );
 
   const selectRandomStartTile = useCallback(() => {
@@ -169,6 +322,15 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     const randomTile = unplayedTiles[Math.floor(Math.random() * unplayedTiles.length)];
     setRevealAnimation({ targetTile: randomTile });
   }, []);
+
+  const nextRecommendedTile = config.plannedTileIds
+    .map((tileId) => progress.tiles.find((tile) => tile.id === tileId))
+    .find((tile): tile is Tile => !!tile && tile.status === 'unplayed');
+
+  const selectRecommendedTile = useCallback(() => {
+    if (!nextRecommendedTile) return;
+    selectTile(nextRecommendedTile.id, 'planned');
+  }, [nextRecommendedTile, selectTile]);
 
   const handleRevealAnimationComplete = useCallback(() => {
     if (!revealAnimation) return;
@@ -191,6 +353,20 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }));
   }, []);
 
+  const cancelCurrentTile = useCallback(() => {
+    const activeTileId = roundStateRef.current.activeTileId;
+    if (activeTileId === null) return;
+
+    setProgress((prev) => ({
+      ...prev,
+      tiles: prev.tiles.map((tile) =>
+        tile.id === activeTileId ? { ...tile, status: 'unplayed' } : tile
+      ),
+      currentActiveTileId: null,
+    }));
+    setRoundState(createInitialRoundState(timerMinutes));
+  }, [timerMinutes]);
+
   const selectRandomPresenter = useCallback(() => {
     let selectedIndex = Math.floor(Math.random() * config.numPairs);
     const lastPresenter = progressRef.current.lastPresenterIndex;
@@ -206,7 +382,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       presenterIndex: selectedIndex,
       phase: 'presenting',
     }));
-  }, [config.avoidRepeatingPresenter, config.numPairs]);
+    if (soundEnabled) playPresenterReveal();
+  }, [config.avoidRepeatingPresenter, config.numPairs, soundEnabled]);
 
   const showPresentation = useCallback(() => {
     setShowPresentationScreen(true);
@@ -234,6 +411,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     const newRoundCount = currentProgress.roundCount + 1;
     const presenterIndex = currentRoundState.presenterIndex;
     setLastPointsAdded(tile.points);
+    if (soundEnabled) playScoreChime();
 
     setProgress((prev) => ({
       ...prev,
@@ -247,14 +425,29 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       history: [...prev.history, { tileId: activeTileId, points: tile.points, presenterIndex }],
     }));
 
+    const completedGuidedRoundCount = config.plannedTileIds.filter((tileId) =>
+      [...currentProgress.history, { tileId: activeTileId, points: tile.points, presenterIndex }].some(
+        (move) => move.tileId === tileId
+      )
+    ).length;
+    const nextSpecialMoment =
+      config.mode === 'guided_workshop'
+        ? SPECIAL_MOMENTS.find(
+            (moment) =>
+              moment.afterGuidedRound === completedGuidedRoundCount &&
+              !completedSpecialMomentIds.includes(moment.id)
+          )
+        : undefined;
+
     setRoundState({
-      phase: 'selecting_tile',
-      activeTileId: null,
+      ...createInitialRoundState(timerMinutes),
       presenterIndex,
-      timerRunning: false,
-      timeRemaining: timerMinutes * 60,
     });
-  }, [timerMinutes]);
+    if (nextSpecialMoment) {
+      setActiveSpecialMoment(nextSpecialMoment);
+      setShowSpecialMomentAnswers(false);
+    }
+  }, [completedSpecialMomentIds, config.mode, config.plannedTileIds, soundEnabled, timerMinutes]);
 
   const undoLastMove = useCallback(() => {
     const currentProgress = progressRef.current;
@@ -273,13 +466,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       history: prev.history.slice(0, -1),
     }));
     setLastPointsAdded(0);
-    setRoundState({
-      phase: 'selecting_tile',
-      activeTileId: null,
-      presenterIndex: null,
-      timerRunning: false,
-      timeRemaining: timerMinutes * 60,
-    });
+    setRoundState(createInitialRoundState(timerMinutes));
   }, [timerMinutes]);
 
   const confirmReset = useCallback(() => {
@@ -288,14 +475,30 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }
   }, [onResetGame]);
 
+  const toggleSound = useCallback(() => {
+    unlockAudio();
+    setSoundEnabled((prev) => !prev);
+  }, []);
+
+  const finishSpecialMoment = useCallback(() => {
+    if (!activeSpecialMoment) return;
+    setCompletedSpecialMomentIds((prev) =>
+      prev.includes(activeSpecialMoment.id) ? prev : [...prev, activeSpecialMoment.id]
+    );
+    setActiveSpecialMoment(null);
+    setShowSpecialMomentAnswers(false);
+  }, [activeSpecialMoment]);
+
   const activeTile = roundState.activeTileId
     ? progress.tiles.find((tile) => tile.id === roundState.activeTileId)
     : undefined;
 
-  const unplayedTiles = progress.tiles.filter((tile) => tile.status === 'unplayed');
   const completedCount = progress.tiles.filter((tile) => tile.status === 'completed').length;
-  const allTilesPlayed = unplayedTiles.length === 0 && !goalReached && progress.currentScore < config.targetScore;
+  const allTilesPlayed = completedCount === progress.tiles.length && !goalReached && progress.currentScore < config.targetScore;
   const isFirstRound = progress.roundCount === 0 && progress.history.length === 0;
+  const currentPlannedRound = config.plannedTileIds.filter((tileId) =>
+    progress.history.some((move) => move.tileId === tileId)
+  ).length;
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 text-white lg:p-6">
@@ -303,6 +506,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
         <TileRevealAnimation
           tiles={progress.tiles}
           targetTile={revealAnimation.targetTile}
+          soundEnabled={soundEnabled}
           onComplete={handleRevealAnimationComplete}
         />
       )}
@@ -312,11 +516,21 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           pairName={config.pairNames[roundState.presenterIndex]}
           activeTile={activeTile}
           durationSeconds={presentationSeconds}
+          soundEnabled={soundEnabled}
           onFinish={finishPresentation}
         />
       )}
 
-      {!showPresentationScreen && (
+      {activeSpecialMoment && (
+        <SpecialMomentScreen
+          moment={activeSpecialMoment}
+          showAnswers={showSpecialMomentAnswers}
+          onRevealAnswers={() => setShowSpecialMomentAnswers(true)}
+          onFinish={finishSpecialMoment}
+        />
+      )}
+
+      {!showPresentationScreen && !activeSpecialMoment && (
         <>
           {allTilesPlayed && (
             <div className="mb-6 rounded-lg border border-red-500/50 bg-red-950/80 p-6 text-center">
@@ -340,6 +554,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
             }
             goalReached={goalReached}
             lastPointsAdded={lastPointsAdded}
+            soundEnabled={soundEnabled}
+            onToggleSound={toggleSound}
           />
 
           <div className="mt-6 flex flex-col gap-6 xl:flex-row">
@@ -350,6 +566,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 activeTileId={roundState.activeTileId}
                 roundPhase={roundState.phase}
                 manualSelectionEnabled={!isFirstRound}
+                mode={config.mode}
               />
             </div>
 
@@ -358,12 +575,15 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 roundPhase={roundState.phase}
                 timerRunning={roundState.timerRunning}
                 timeRemaining={roundState.timeRemaining}
+                mode={config.mode}
                 onSelectRandomTile={selectRandomStartTile}
+                onSelectRecommendedTile={selectRecommendedTile}
                 onStartTimer={startTimer}
                 onGoToPresenting={goToPresenting}
                 onSelectRandomPresenter={selectRandomPresenter}
                 onShowPresentation={showPresentation}
                 onMarkComplete={markTileComplete}
+                onCancelCurrentTile={cancelCurrentTile}
                 onUndo={undoLastMove}
                 onReset={confirmReset}
                 canMarkComplete={roundState.activeTileId !== null}
@@ -374,6 +594,9 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 }
                 activeTile={activeTile}
                 isFirstRound={isFirstRound}
+                nextRecommendedTile={nextRecommendedTile}
+                currentPlannedRound={currentPlannedRound}
+                totalPlannedRounds={config.plannedTileIds.length}
               />
             </div>
           </div>

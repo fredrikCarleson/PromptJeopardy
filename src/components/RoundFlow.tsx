@@ -1,4 +1,4 @@
-import { CheckCircle, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2 } from 'lucide-react';
+import { CheckCircle, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
 import { RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -7,18 +7,24 @@ interface RoundFlowProps {
   roundPhase: RoundPhase;
   timerRunning: boolean;
   timeRemaining: number;
+  mode: 'guided_workshop' | 'open_board';
   onSelectRandomTile: () => void;
+  onSelectRecommendedTile: () => void;
   onStartTimer: () => void;
   onGoToPresenting: () => void;
   onSelectRandomPresenter: () => void;
   onShowPresentation: () => void;
   onMarkComplete: () => void;
+  onCancelCurrentTile: () => void;
   onUndo: () => void;
   onReset: () => void;
   canMarkComplete: boolean;
   presenterName: string | null;
   activeTile: Tile | undefined;
   isFirstRound: boolean;
+  nextRecommendedTile: Tile | undefined;
+  currentPlannedRound: number;
+  totalPlannedRounds: number;
 }
 
 const StepIndicator = ({
@@ -52,18 +58,24 @@ export default function RoundFlow({
   roundPhase,
   timerRunning,
   timeRemaining,
+  mode,
   onSelectRandomTile,
+  onSelectRecommendedTile,
   onStartTimer,
   onGoToPresenting,
   onSelectRandomPresenter,
   onShowPresentation,
   onMarkComplete,
+  onCancelCurrentTile,
   onUndo,
   onReset,
   canMarkComplete,
   presenterName,
   activeTile,
   isFirstRound,
+  nextRecommendedTile,
+  currentPlannedRound,
+  totalPlannedRounds,
 }: RoundFlowProps) {
   const isSelecting = roundPhase === 'selecting_tile';
   const isWorking = roundPhase === 'working';
@@ -89,20 +101,51 @@ export default function RoundFlow({
       {isSelecting && (
         <div className="space-y-3 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
           <div className="font-semibold text-blue-200">
-            {isFirstRound ? 'Första rutan ska slumpas' : 'Välj nästa ruta'}
+            {mode === 'guided_workshop'
+              ? nextRecommendedTile
+                ? 'Välj nästa rekommenderade runda'
+                : 'Den rekommenderade banan är klar'
+              : isFirstRound
+                ? 'Första rutan ska slumpas'
+                : 'Välj nästa ruta'}
           </div>
           <p className="text-sm text-slate-300">
-            {isFirstRound
+            {mode === 'guided_workshop'
+              ? nextRecommendedTile
+                ? 'Workshopläget bygger en tydlig femrundors båge: förstå, klarspråk, arbetskontext, skapande och datakontroll.'
+                : 'Fortsätt fritt om ni har tid kvar eller använd slutet till gemensam summering.'
+              : isFirstRound
               ? 'Starta workshopen med slumpen så att ingen styr första ämnet.'
               : 'Det presenterande paret kan välja en ledig ruta på tavlan, eller så kan du slumpa nästa ruta.'}
           </p>
+          {mode === 'guided_workshop' && nextRecommendedTile && (
+            <div className="rounded-md bg-slate-800 p-3">
+              <div className="text-xs uppercase text-slate-400">
+                Rekommenderad runda {Math.min(currentPlannedRound + 1, totalPlannedRounds)} av {totalPlannedRounds}
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">{nextRecommendedTile.title}</div>
+              <div className="mt-1 text-xs text-slate-400">
+                {TOPIC_LABELS[nextRecommendedTile.topic]} · {nextRecommendedTile.points} poäng
+              </div>
+            </div>
+          )}
+          {mode === 'guided_workshop' && nextRecommendedTile && (
+            <button
+              type="button"
+              onClick={onSelectRecommendedTile}
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-yellow-500 py-2.5 font-semibold text-slate-950 transition-colors hover:bg-yellow-400"
+            >
+              <Play size={18} />
+              Starta rekommenderad runda
+            </button>
+          )}
           <button
             type="button"
             onClick={onSelectRandomTile}
             className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-500"
           >
             <Shuffle size={18} />
-            Slumpa ruta
+            {mode === 'guided_workshop' ? 'Slumpa i stället' : 'Slumpa ruta'}
           </button>
         </div>
       )}
@@ -125,6 +168,17 @@ export default function RoundFlow({
               <span className="rounded border border-blue-400/30 bg-blue-400/10 px-2 py-1 text-blue-100">
                 {activeTile.appFocus}
               </span>
+            </div>
+          </div>
+
+          <div className="rounded-md border border-slate-700 bg-slate-950/60 p-3">
+            <div className="text-xs font-bold uppercase text-slate-400">Promptrecept</div>
+            <div className="mt-2 grid gap-2 text-xs text-slate-200 sm:grid-cols-2">
+              <span>1. Roll eller målgrupp</span>
+              <span>2. Avgränsad källa</span>
+              <span>3. Tydlig uppgift</span>
+              <span>4. Önskat format</span>
+              <span>5. Kontrollfråga</span>
             </div>
           </div>
 
@@ -156,6 +210,15 @@ export default function RoundFlow({
           >
             <Presentation size={18} />
             Gå till muntlig redovisning
+          </button>
+
+          <button
+            type="button"
+            onClick={onCancelCurrentTile}
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2.5 font-semibold text-slate-200 transition-colors hover:bg-slate-700"
+          >
+            <XCircle size={18} />
+            Byt ruta om uppgiften inte går att genomföra
           </button>
         </div>
       )}
@@ -205,6 +268,18 @@ export default function RoundFlow({
           <div className="rounded-md bg-slate-800 p-3">
             <div className="text-sm font-semibold text-white">{activeTile.title}</div>
             <div className="mt-1 text-xs text-slate-400">{activeTile.points} poäng · {TOPIC_LABELS[activeTile.topic]}</div>
+          </div>
+          <div className="rounded-md border border-yellow-300/30 bg-yellow-300/10 p-3">
+            <div className="text-xs font-bold uppercase text-yellow-100">Lärdom att lyfta</div>
+            <p className="mt-2 text-sm leading-relaxed text-yellow-50">{activeTile.learningGoal}</p>
+          </div>
+          <div className="rounded-md border border-slate-700 bg-slate-950/60 p-3">
+            <div className="text-xs font-bold uppercase text-slate-400">Snabb kvalitetscheck</div>
+            <div className="mt-2 grid gap-2 text-xs text-slate-200">
+              <span>□ Källan var avgränsad</span>
+              <span>□ Svaret hade ett tydligt format</span>
+              <span>□ Något skulle kontrolleras av människa</span>
+            </div>
           </div>
           <button
             type="button"

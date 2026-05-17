@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ChevronLeft, Play } from 'lucide-react';
-import { TILES } from '../data/tiles';
+import { GUIDED_WORKSHOP_TILE_IDS, TILES } from '../data/tiles';
 import { GameConfig } from '../types';
 
 interface SetupScreenProps {
@@ -9,13 +9,18 @@ interface SetupScreenProps {
 }
 
 const boardTotalScore = TILES.reduce((sum, tile) => sum + tile.points, 0);
-const recommendedSixtyMinuteTarget = 2100;
+const guidedWorkshopTarget = GUIDED_WORKSHOP_TILE_IDS.reduce((sum, tileId) => {
+  const tile = TILES.find((candidate) => candidate.id === tileId);
+  return sum + (tile?.points ?? 0);
+}, 0);
+const openBoardTarget = 2100;
 
 export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
+  const [mode, setMode] = useState<GameConfig['mode']>('guided_workshop');
   const [numPairs, setNumPairs] = useState(25);
-  const [targetScore, setTargetScore] = useState(recommendedSixtyMinuteTarget);
-  const [timerMinutes, setTimerMinutes] = useState(7);
-  const [presentationSeconds, setPresentationSeconds] = useState(90);
+  const [targetScore, setTargetScore] = useState(guidedWorkshopTarget);
+  const [timerMinutes, setTimerMinutes] = useState(5);
+  const [presentationSeconds, setPresentationSeconds] = useState(75);
   const [avoidRepeatingPresenter, setAvoidRepeatingPresenter] = useState(true);
   const [pairNamesInput, setPairNamesInput] = useState('');
 
@@ -35,14 +40,30 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
   const handleStartGame = () => {
     const pairNames = getPairNames();
     const config: GameConfig = {
+      mode,
       numPairs: pairNames.length,
       pairNames,
       targetScore,
       timerMinutes,
       presentationSeconds,
       avoidRepeatingPresenter,
+      plannedTileIds: mode === 'guided_workshop' ? GUIDED_WORKSHOP_TILE_IDS : [],
     };
     onStartGame(config);
+  };
+
+  const applyMode = (nextMode: GameConfig['mode']) => {
+    setMode(nextMode);
+    if (nextMode === 'guided_workshop') {
+      setTargetScore(guidedWorkshopTarget);
+      setTimerMinutes(5);
+      setPresentationSeconds(75);
+      return;
+    }
+
+    setTargetScore(openBoardTarget);
+    setTimerMinutes(7);
+    setPresentationSeconds(90);
   };
 
   return (
@@ -61,11 +82,45 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-black text-white lg:text-5xl">Spelinställningar</h1>
             <p className="mt-3 text-slate-300">
-              För en workshop med årsredovisningen, klarspråksmallen, M365 Copilot och ChatGPT 5.x.
+              För en workshop med årsredovisningen, klarspråksdokumentet och Microsoft 365 Copilot Chat.
             </p>
           </div>
 
           <div className="space-y-5">
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-200">Spelformat</label>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => applyMode('guided_workshop')}
+                  className={`rounded-md border px-4 py-3 text-left transition-colors ${
+                    mode === 'guided_workshop'
+                      ? 'border-yellow-300 bg-yellow-300/10 text-yellow-100'
+                      : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                  }`}
+                >
+                  <div className="font-bold">60 min workshop</div>
+                  <div className="mt-1 text-xs leading-relaxed text-slate-300">
+                    Fem rekommenderade rutor, tydlig progression och realistisk tid för lärande.
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMode('open_board')}
+                  className={`rounded-md border px-4 py-3 text-left transition-colors ${
+                    mode === 'open_board'
+                      ? 'border-yellow-300 bg-yellow-300/10 text-yellow-100'
+                      : 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                  }`}
+                >
+                  <div className="font-bold">Fri tavla</div>
+                  <div className="mt-1 text-xs leading-relaxed text-slate-300">
+                    Klassisk Jeopardy-känsla med slumpad start och valfri fortsättning.
+                  </div>
+                </button>
+              </div>
+            </div>
+
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-200">Antal par</label>
               <input
@@ -106,7 +161,10 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
                   className="w-full rounded-md border border-slate-600 bg-slate-800 px-4 py-2.5 text-white outline-none transition-colors focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 />
                 <p className="mt-1 text-xs text-slate-500">
-                  Rekommenderat för 60 min: {recommendedSixtyMinuteTarget}. Hela tavlan: {boardTotalScore}.
+                  {mode === 'guided_workshop'
+                    ? `Rekommenderad femrundors bana: ${guidedWorkshopTarget}.`
+                    : `Rekommenderat för öppen tavla: ${openBoardTarget}.`}{' '}
+                  Hela tavlan: {boardTotalScore}.
                 </p>
               </div>
 
@@ -149,8 +207,9 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
             </div>
 
             <div className="rounded-md border border-blue-500/30 bg-blue-500/10 p-4 text-sm leading-relaxed text-blue-100">
-              Med 60 minuter hinner gruppen troligen 5-6 frågor. Målet kräver att gruppen väljer
-              flera svårare rutor, eftersom 2100 poäng motsvarar 350 poäng i snitt vid 6 frågor.
+              {mode === 'guided_workshop'
+                ? 'Workshopläget använder fem planerade rutor och tre korta muntliga specialmoment mellan rundorna: Vad saknas?, Förbättra prompten och Farlig detalj.'
+                : 'Fri tavla passar när du vill ha mer spelshow-känsla. Med 60 minuter hinner gruppen oftast 5-6 frågor, så 2100 poäng kräver flera svårare rutor.'}
             </div>
 
             <button

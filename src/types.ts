@@ -9,17 +9,21 @@ export type TileTopic =
 
 export type PointValue = 100 | 200 | 300 | 400 | 500;
 
-export type ToolFocus = 'M365 Copilot' | 'ChatGPT 5.x' | 'Valfritt verktyg';
+export type ToolFocus = 'Microsoft 365 Copilot Chat';
 
 export type AppFocus =
   | 'Copilot Chat'
-  | 'Word'
-  | 'PowerPoint'
-  | 'Excel'
-  | 'Outlook'
-  | 'Images'
-  | 'Teams'
-  | 'ChatGPT';
+  | 'Copilot Chat -> OneDrive/SharePoint/Search'
+  | 'Copilot Chat -> OneDrive/SharePoint'
+  | 'Copilot Chat -> klarspråkstext'
+  | 'Copilot Chat -> klarspråksgranskning'
+  | 'Copilot Chat -> Word-dokument'
+  | 'Copilot Chat -> arbetskontext'
+  | 'Copilot Chat -> dokumentunderlag'
+  | 'Copilot Chat -> PowerPoint'
+  | 'Copilot Chat -> bild + PowerPoint'
+  | 'Copilot Chat -> Excel'
+  | 'Copilot Chat -> bild';
 
 export type TileStatus = 'unplayed' | 'active' | 'completed';
 
@@ -41,10 +45,12 @@ export interface Tile {
 }
 
 export interface GameConfig {
+  mode: 'guided_workshop' | 'open_board';
   numPairs: number;
   pairNames: string[];
   targetScore: number;
   timerMinutes: number;
   presentationSeconds: number;
   avoidRepeatingPresenter: boolean;
+  plannedTileIds: number[];
 }
