@@ -41,11 +41,11 @@ export const TOPIC_STYLES: Record<TileTopic, {
     glow: 'bg-violet-400/30 border-violet-300 shadow-violet-400/40',
   },
   'Data och bild': {
-    header: 'bg-cyan-950 text-cyan-100 border-cyan-500/60',
-    tile: 'bg-cyan-800 border-cyan-500 hover:bg-cyan-700',
-    active: 'bg-yellow-500 text-slate-950 border-yellow-200 ring-yellow-200/70',
-    completed: 'bg-cyan-950/60 text-cyan-200 border-cyan-700/50',
-    badge: 'bg-cyan-500/20 text-cyan-200 border-cyan-400/40',
-    glow: 'bg-cyan-400/30 border-cyan-300 shadow-cyan-400/40',
+    header: 'bg-gold-950 text-gold-100 border-gold-400/60',
+    tile: 'bg-gold-800 border-gold-400 hover:bg-gold-700',
+    active: 'bg-gold-400 text-slate-950 border-gold-200 ring-gold-200/70',
+    completed: 'bg-gold-950/60 text-gold-200 border-gold-700/50',
+    badge: 'bg-gold-400/20 text-gold-200 border-gold-400/40',
+    glow: 'bg-gold-400/30 border-gold-300 shadow-gold-400/40',
   },
 };
