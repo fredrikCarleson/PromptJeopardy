@@ -1,4 +1,5 @@
-import { Award, BookOpen, Monitor, Play, Users, Wand2 } from 'lucide-react';
+import { Award, BookOpen, Download, Monitor, Play, Users, Wand2 } from 'lucide-react';
+import { downloadQuestionsAsText } from '../utils/exportQuestions';
 
 interface OnboardingScreenProps {
   onStartSetup: () => void;
@@ -100,6 +101,14 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
           >
             <BookOpen size={22} />
             Läs regler
+          </button>
+          <button
+            type="button"
+            onClick={downloadQuestionsAsText}
+            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-slate-800 py-4 text-lg font-bold text-white transition-colors hover:bg-slate-700"
+          >
+            <Download size={22} />
+            Ladda ner frågor
           </button>
         </div>
       </div>
