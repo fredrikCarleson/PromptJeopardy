@@ -1,4 +1,4 @@
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, MousePointerClick } from 'lucide-react';
 import { PointValue, RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS, TOPICS } from '../data/tiles';
 import { TOPIC_STYLES } from '../utils/categoryStyles';
@@ -86,7 +86,12 @@ export default function GameBoard({
             Välj poängruta. Uppgiften är dold tills rutan väljs.
           </p>
         </div>
-        {!manualSelectionEnabled && (
+        {manualSelectionEnabled ? (
+          <div className="flex items-center gap-2 rounded-md border border-violet-400/60 bg-violet-500/15 px-3 py-1.5 text-base font-semibold text-violet-50">
+            <MousePointerClick size={20} />
+            Paret kan välja – klicka på en ledig ruta
+          </div>
+        ) : (
           <div className="rounded-md border border-yellow-300/50 bg-yellow-300/10 px-3 py-1.5 text-base font-semibold text-yellow-100">
             {mode === 'guided_workshop' ? 'Starta från facilitatorpanelen' : 'Första rutan slumpas'}
           </div>

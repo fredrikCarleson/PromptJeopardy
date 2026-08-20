@@ -16,20 +16,34 @@ export default function SpecialMomentScreen({
 }: SpecialMomentScreenProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-6"
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950 p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={moment.title}
     >
-      <div className="w-full max-w-5xl space-y-6">
+      <div className="mx-auto grid min-h-full w-full max-w-5xl content-center gap-4 py-2 sm:gap-5">
         <div className="text-center">
           <div className="text-sm font-bold uppercase tracking-widest text-yellow-200">Specialmoment</div>
           <h2 className="mt-2 text-5xl font-black text-white lg:text-6xl">{moment.title}</h2>
-          <p className="mx-auto mt-4 max-w-3xl text-xl leading-relaxed text-slate-200">{moment.prompt}</p>
         </div>
 
+        <section className="rounded-xl border border-yellow-300/50 bg-yellow-300/10 p-5">
+          <div className="text-sm font-black uppercase tracking-widest text-yellow-200">Er uppgift</div>
+          <p className="mt-2 text-2xl font-bold leading-snug text-white">{moment.prompt}</p>
+          <ol className="mt-4 grid gap-3 md:grid-cols-3">
+            {moment.taskSteps.map((step, index) => (
+              <li key={step} className="flex items-start gap-3 rounded-lg bg-slate-950/70 p-4 text-lg font-semibold leading-snug text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-yellow-300 font-black text-slate-950">
+                  {index + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         <div className="rounded-lg border border-blue-500/40 bg-blue-950/50 p-6">
-          <div className="mb-3 text-xs font-bold uppercase text-blue-200">På skärmen</div>
+          <div className="mb-3 text-sm font-black uppercase tracking-wide text-blue-200">{moment.contentLabel}</div>
           <div className="space-y-3">
             {moment.screenContent.map((line) => (
               <div key={line} className="rounded-md bg-slate-950/70 p-4 text-lg leading-relaxed text-white">

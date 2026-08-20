@@ -1,4 +1,4 @@
-import { CheckCircle, Maximize2, Pause, Play, Plus, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
+import { CheckCircle, Maximize2, MousePointerClick, Pause, Play, Plus, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
 import { RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -104,7 +104,7 @@ export default function RoundFlow({
           <div className="font-semibold text-blue-200">
             {mode === 'guided_workshop'
               ? nextRecommendedTile
-                ? 'Välj nästa rekommenderade runda'
+                ? 'Välj hur nästa ruta ska bestämmas'
                 : 'Den rekommenderade banan är klar'
               : isFirstRound
                 ? 'Första rutan ska slumpas'
@@ -140,13 +140,24 @@ export default function RoundFlow({
               Starta rekommenderad runda
             </button>
           )}
+          {!isFirstRound && (
+            <div className="rounded-md border-2 border-violet-400/60 bg-violet-500/15 p-3 text-violet-50" role="note">
+              <div className="flex items-center gap-2 text-base font-bold">
+                <MousePointerClick size={20} />
+                Paret väljer på spelplanen
+              </div>
+              <p className="mt-1.5 text-sm leading-relaxed text-violet-100">
+                Be det presenterande paret välja ämne och poäng. Klicka sedan direkt på den lediga brickan på spelplanen.
+              </p>
+            </div>
+          )}
           <button
             type="button"
             onClick={onSelectRandomTile}
             className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-500"
           >
             <Shuffle size={18} />
-            {mode === 'guided_workshop' ? 'Slumpa i stället' : 'Slumpa ruta'}
+            Slumpa nästa ruta
           </button>
         </div>
       )}

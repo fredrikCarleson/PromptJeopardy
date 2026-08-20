@@ -351,14 +351,6 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }));
   }, []);
 
-  const startWorkFromModal = useCallback(() => {
-    setRoundState((prev) => ({
-      ...prev,
-      timerRunning: prev.timeRemaining > 0,
-    }));
-    setSelectedTileForModal(null);
-  }, []);
-
   const showActiveTask = useCallback(() => {
     const activeTileId = roundStateRef.current.activeTileId;
     if (activeTileId !== null) setSelectedTileForModal(activeTileId);
@@ -688,7 +680,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           onClose={() => setSelectedTileForModal(null)}
           timeRemaining={roundState.timeRemaining}
           timerRunning={roundState.timerRunning}
-          onStartWork={startWorkFromModal}
+          onToggleTimer={startTimer}
         />
       )}
     </div>

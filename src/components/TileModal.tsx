@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, ClipboardList, FileText, Play, Sparkles, Target, X } from 'lucide-react';
+import { CheckCircle2, ClipboardList, FileText, Pause, Play, Sparkles, Target, X } from 'lucide-react';
 import { Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { TOPIC_STYLES } from '../utils/categoryStyles';
@@ -10,10 +10,10 @@ interface TileModalProps {
   onClose: () => void;
   timeRemaining: number;
   timerRunning: boolean;
-  onStartWork: () => void;
+  onToggleTimer: () => void;
 }
 
-export default function TileModal({ tile, onClose, timeRemaining, timerRunning, onStartWork }: TileModalProps) {
+export default function TileModal({ tile, onClose, timeRemaining, timerRunning, onToggleTimer }: TileModalProps) {
   const [activeTab, setActiveTab] = useState<'task' | 'learning'>('task');
 
   useEffect(() => {
@@ -195,19 +195,22 @@ export default function TileModal({ tile, onClose, timeRemaining, timerRunning, 
               onClick={onClose}
               className="rounded-md bg-slate-800 px-5 py-3 font-bold text-slate-100 transition-colors hover:bg-slate-700"
             >
-              {timerRunning ? 'Stäng – tiden fortsätter' : 'Stäng utan att starta'}
+              {timerRunning ? 'Stäng – timern fortsätter' : 'Stäng'}
             </button>
             <button
               type="button"
-              onClick={onStartWork}
-              className="flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-6 py-3 font-bold text-white transition-colors hover:bg-emerald-500"
+              onClick={onToggleTimer}
+              disabled={timeRemaining === 0}
+              className={`flex items-center justify-center gap-2 rounded-md px-6 py-3 font-bold text-white transition-colors ${
+                timeRemaining === 0
+                  ? 'cursor-not-allowed bg-slate-700 text-slate-400'
+                  : timerRunning
+                    ? 'bg-amber-600 hover:bg-amber-500'
+                    : 'bg-emerald-600 hover:bg-emerald-500'
+              }`}
             >
-              <Play size={20} />
-              {timerRunning
-                ? 'Stäng och fortsätt arbeta'
-                : timeRemaining === 0
-                  ? 'Stäng – tiden är slut'
-                  : `Starta ${formatTime(timeRemaining)} och stäng`}
+              {timerRunning ? <Pause size={20} /> : <Play size={20} />}
+              {timeRemaining === 0 ? 'Tiden är slut' : timerRunning ? 'Pausa timer' : 'Starta timer'}
             </button>
           </div>
         </div>

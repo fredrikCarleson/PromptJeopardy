@@ -65,7 +65,7 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
             </h2>
             <div className="grid gap-4 md:grid-cols-2">
               {[
-                ['1. Välj ruta', 'I workshopläget följer ni en rekommenderad femrundors bana. I fri tavla slumpas första rutan och senare kan paret välja.'],
+                ['1. Välj ruta', 'Facilitatorn kan starta rekommenderad ruta, slumpa eller låta det presenterande paret välja ämne och poäng direkt på spelplanen.'],
                 ['2. Arbeta', 'Alla par arbetar med samma uppgift under timern och väljer själva en relevant del av rapporten.'],
                 ['3. Redovisa', 'Ett presenterande par visar resultatet. Ett annat granskarpar lyfter en styrka eller ställer en kontrollfråga. Par som ännu inte haft en roll prioriteras.'],
                 ['4. Poäng', 'Facilitatorn markerar rutan som klar. Den blir låst och synlig på tavlan.'],
