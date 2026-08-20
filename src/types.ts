@@ -9,7 +9,11 @@ export type TileTopic =
 
 export type PointValue = 100 | 200 | 300 | 400 | 500;
 
-export type ToolFocus = 'Microsoft 365 Copilot Chat';
+export type ToolFocus =
+  | 'Microsoft 365 Copilot Chat'
+  | 'Copilot i Word'
+  | 'Copilot i Excel'
+  | 'Microsoft 365 Copilot Create';
 
 export type AppFocus =
   | 'Copilot Chat'
@@ -23,7 +27,10 @@ export type AppFocus =
   | 'Copilot Chat -> PowerPoint'
   | 'Copilot Chat -> bild + PowerPoint'
   | 'Copilot Chat -> Excel'
-  | 'Copilot Chat -> bild';
+  | 'Copilot Chat -> bild'
+  | 'Word Agent / Copilot i Word'
+  | 'Copilot i Excel'
+  | 'Create -> Infografik';
 
 export type TileStatus = 'unplayed' | 'active' | 'completed';
 

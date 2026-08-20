@@ -20,18 +20,32 @@ npm run dev
 ## Recommended one-hour format
 
 - Use `60 min workshop` mode.
-- Prepare the annual report, the klarspråk document, and a small pack of safe shared files in advance.
+- Prepare the annual report and the klarspråk document in advance.
+- Send `public/ovningsfiler/Semesterplan-demo.xlsx` to participants before the workshop. Ask them to save a copy in OneDrive or SharePoint and open it in Excel.
 - Run the five recommended rounds in order:
   1. `Tre viktigaste insikterna`
-  2. `Testa mot klarspråksdokumentet`
-  3. `Jämför filer från OneDrive eller SharePoint`
-  4. `Workshopövning som PowerPoint`
-  5. `Datainsikt med kontrollfrågor`
+  2. `Färdigt informationsblad i Word`
+  3. `Formeldetektiven`
+  4. `Infografik från årsredovisningen`
+  5. `När är bemanningen som lägst?`
 - Use the built-in oral special moments between rounds:
   - after round 2: `Vad saknas?`
   - after round 3: `Förbättra prompten`
   - after round 4: `Farlig detalj`
 - Keep the teaching thread consistent: role, source, task, format, control.
+
+## Excel exercise
+
+- Participant file: `public/ovningsfiler/Semesterplan-demo.xlsx`
+- Facilitator-only answer key: `FACIT_SEMESTERPLAN.md`
+- The workbook contains synthetic data, three planted formula anomalies, and a staffing scenario.
+- Do not distribute the answer key with the workbook.
+- To regenerate the workbook:
+
+```bash
+python -m pip install -r scripts/requirements.txt
+python scripts/create_semesterplan.py
+```
 
 ## Content workflow
 

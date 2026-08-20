@@ -1,4 +1,4 @@
-import { Award, BookOpen, Download, Monitor, Play, Users, Wand2 } from 'lucide-react';
+import { Award, BookOpen, Download, FileSpreadsheet, Monitor, Play, Users, Wand2 } from 'lucide-react';
 import { downloadQuestionsAsText } from '../utils/exportQuestions';
 
 interface OnboardingScreenProps {
@@ -7,6 +7,8 @@ interface OnboardingScreenProps {
 }
 
 export default function OnboardingScreen({ onStartSetup, onViewRules }: OnboardingScreenProps) {
+  const excelExercisePath = `${import.meta.env.BASE_URL}ovningsfiler/Semesterplan-demo.xlsx`;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 p-4 text-white">
       <div className="w-full max-w-5xl space-y-8">
@@ -39,9 +41,9 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
 
           <div className="rounded-lg border border-emerald-500/30 bg-slate-900 p-5">
             <Wand2 className="mb-4 h-8 w-8 text-emerald-300" />
-            <h3 className="text-lg font-bold">Copilot Chat</h3>
+            <h3 className="text-lg font-bold">Copilot i flera appar</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              Uppgifterna tränar hur Copilot Chat använder rapporttext, arbetskontext och tydliga instruktioner.
+              Uppgifterna går från frågor i chatten till riktiga Word-filer, Excelanalyser och infografik.
             </p>
           </div>
 
@@ -85,7 +87,7 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
           </div>
         </section>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <button
             type="button"
             onClick={onStartSetup}
@@ -110,6 +112,14 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
             <Download size={22} />
             Ladda ner frågor
           </button>
+          <a
+            href={excelExercisePath}
+            download
+            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-emerald-700 py-4 text-lg font-bold text-white transition-colors hover:bg-emerald-600"
+          >
+            <FileSpreadsheet size={22} />
+            Ladda ner Excelövning
+          </a>
         </div>
       </div>
     </main>

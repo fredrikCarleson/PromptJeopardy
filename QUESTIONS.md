@@ -2,7 +2,7 @@
 
 Redigera den här filen när du vill ändra frågor, kategorier, poäng eller reflektionsfrågor. Be sedan Codex läsa `QUESTIONS.md` och uppdatera `src/data/tiles.ts`.
 
-Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fråga handlar om Word, Excel, PowerPoint, bild eller OneDrive betyder det att deltagarna i Copilot Chat ska be Copilot skapa, hitta, jämföra eller sammanfatta materialet. De arbetar alltså från chatten, men resultatet kan vara till exempel ett Word-dokument, en PowerPoint, en Excel-tabell, en bild eller en filjämförelse.
+Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-funktioner i Word, Excel och Create. Verktyget står uttryckligen i varje fråga. Deltagarna ska arbeta i den angivna appen och visa den faktiska filen, analysen eller bilden när uppgiften kräver det.
 
 ## Förstå rapporten
 
@@ -112,18 +112,18 @@ Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fr�
   - Vilka brister hittade Copilot?
   - Vilket förbättringsförslag var mest användbart?
 
-### 400 poäng: Word-utkast i klarspråk från källfil
+### 400 poäng: Färdigt informationsblad i Word
 
-- Kort etikett: Wordutkast
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Word-dokument
-- Uppgift: Ladda upp eller referera klarspråksdokumentet i Copilot Chat. Be Copilot Chat skapa ett Word-utkast som bygger på ett kort utdrag ur årsredovisningen: ett informationsblad i klarspråk med rubrik, ingress, tre huvudpunkter och en tydlig avslutning.
-- Avgränsa källan: Använd ett kort utdrag ur årsredovisningen och klarspråksdokumentet som språkkrav.
-- Lärandemål: Visa hur Copilot Chat kan skapa dokument från källmaterial och samtidigt följa ett uppladdat klarspråksdokument.
+- Kort etikett: Word-fil
+- Verktyg: Copilot i Word
+- Appfokus: Word Agent / Copilot i Word
+- Uppgift: Årsredovisningen och klarspråksdokumentet är redan tillgängliga. Välj 2-3 sidor om ett ämne som är relevant för medborgare. Använd Word Agent eller Copilot i Word för att skapa ett färdigt informationsblad på högst en sida. Öppna dokumentet, faktakontrollera det och förbättra minst en formulering.
+- Avgränsa källan: Använd bara de valda sidorna och klarspråksdokumentet. Ange sidnummer i dokumentet.
+- Lärandemål: Visa att Copilot kan skapa en riktig Office-fil från källmaterial och att resultatet behöver mänsklig redigering.
 - Reflektionsfrågor:
-  - Hur hänvisade ni till källmaterialet?
-  - Hur instruerade ni Copilot att skriva i klarspråk?
-  - Vad behövde ni redigera manuellt för att texten skulle bli myndighetsmässig?
+  - Visa Word-filen och beskriv vem den är skriven för.
+  - Vilken formulering eller uppgift förbättrade ni manuellt?
+  - Hur kontrollerade ni att innehållet stämde med källan?
 
 ### 500 poäng: Bygg en återanvändbar klarspråksprompt
 
@@ -153,18 +153,18 @@ Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fr�
   - Var risken tydligt stödd av texten?
   - Vilken följdfråga blev bäst?
 
-### 200 poäng: Mini-SWOT
+### 200 poäng: Dra en slutsats – försök motbevisa den
 
-- Kort etikett: SWOT
+- Kort etikett: Motbevisa
 - Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat
-- Uppgift: Välj 2-3 sidor och be Copilot Chat göra en mini-SWOT med en punkt per ruta: styrka, svaghet, möjlighet och hot.
-- Avgränsa källan: Välj material som innehåller både resultat och framåtblick.
-- Lärandemål: Träna på etablerade analysramverk och kort output.
+- Uppgift: Välj 2-3 sidor ur årsredovisningen. Be Copilot Chat formulera en viktig slutsats och ange exakt stöd i texten. Be sedan Copilot hitta en alternativ förklaring, ett motargument eller information som saknas.
+- Avgränsa källan: Använd bara de valda sidorna och kräv sidnummer eller tydliga textbelägg.
+- Lärandemål: Träna på källstöd, alternativa förklaringar och kritisk granskning av AI-genererade slutsatser.
 - Reflektionsfrågor:
-  - Vilken SWOT-punkt var mest träffsäker?
-  - Behövde ni förklara SWOT-formatet i prompten?
-  - Vad blev för spekulativt?
+  - Vilken slutsats drog Copilot?
+  - Vilket belägg var starkast?
+  - Vad hittade ni som försvagade slutsatsen?
 
 ### 300 poäng: Jämför filer från OneDrive eller SharePoint
 
@@ -210,11 +210,11 @@ Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fr�
 ### 100 poäng: Word-dokument till kollegor
 
 - Kort etikett: Word
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Word-dokument
-- Uppgift: Välj ett kort avsnitt och be Copilot Chat skapa ett Word-dokument för kollegor som sammanfattar varför avsnittet är relevant. Dokumentet ska ha rubrik, ingress, tre korta budskap och en enkel faktaruta.
+- Verktyg: Copilot i Word
+- Appfokus: Word Agent / Copilot i Word
+- Uppgift: Välj ett kort avsnitt ur årsredovisningen. Använd Word Agent eller Copilot i Word för att skapa och öppna ett riktigt Word-dokument för kollegor. Dokumentet ska förklara varför avsnittet är relevant och innehålla rubrik, ingress, tre korta budskap och en enkel faktaruta.
 - Avgränsa källan: Använd ett kort avsnitt som går att sammanfatta på 5-7 meningar.
-- Lärandemål: Öva på att skapa ett konkret Word-dokument med målgrupp, struktur och tydligt format från chatten.
+- Lärandemål: Öva på att skapa, öppna och kvalitetssäkra ett konkret Word-dokument med tydlig målgrupp.
 - Reflektionsfrågor:
   - Vilken struktur fick Word-dokumentet?
   - Hur styrde ni ton och längd?
@@ -223,11 +223,11 @@ Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fr�
 ### 200 poäng: FAQ från ett avsnitt som Word-dokument
 
 - Kort etikett: FAQ Word
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Word-dokument
-- Uppgift: Välj ett avsnitt i årsredovisningen och be Copilot Chat skapa ett Word-dokument med en FAQ för medborgare. Dokumentet ska ha rubrik, kort ingress, fem frågor och svar, samt en avslutande ruta med "Bra att veta".
+- Verktyg: Copilot i Word
+- Appfokus: Word Agent / Copilot i Word
+- Uppgift: Välj ett avsnitt i årsredovisningen. Använd Word Agent eller Copilot i Word för att skapa och öppna en FAQ för medborgare. Dokumentet ska ha rubrik, kort ingress, fem frågor och svar samt en avslutande ruta med "Bra att veta". Kontrollera att svaren stöds av källan.
 - Avgränsa källan: Använd ett avsnitt där medborgare sannolikt kan ha frågor.
-- Lärandemål: Öva på att från chatten skapa ett externt Word-dokument med målgrupp, struktur och saklig ton.
+- Lärandemål: Öva på att skapa en riktig Word-fil med målgrupp, struktur, saklig ton och källkontroll.
 - Reflektionsfrågor:
   - Vilka frågor valde Copilot ut?
   - Hur styrde ni att svaren skulle vara korta och begripliga?
@@ -274,68 +274,68 @@ Viktigt: deltagarna använder alltid **Microsoft 365 Copilot Chat**. När en fr�
 
 ## Data och bild
 
-### 100 poäng: Förklara en tabell
+### 100 poäng: Vad säger tabellen – och inte?
 
-- Kort etikett: Tabell
+- Kort etikett: Tabellkritik
 - Verktyg: Microsoft 365 Copilot Chat
 - Appfokus: Copilot Chat -> Excel
-- Uppgift: Välj en tabell i årsredovisningen. Be Copilot Chat förklara vad tabellen visar med tre enkla punkter och föreslå hur den skulle kunna läggas upp i Excel.
+- Uppgift: Välj en tabell i årsredovisningen. Be Copilot Chat hitta en viktig insikt, en osäkerhet och en möjlig feltolkning. Kräv att varje påstående kopplas till värden i tabellen.
 - Avgränsa källan: Använd en enda tabell eller ett tydligt tabellutdrag.
-- Lärandemål: Öva på att göra data begriplig utan att överanalysera.
+- Lärandemål: Öva på att skilja mellan vad data visar, vad den inte visar och vad som kräver kontroll.
 - Reflektionsfrågor:
   - Vilken tabell valde ni?
-  - Vilka tre punkter fick ni?
-  - Var någon tolkning osäker?
+  - Vilken insikt och osäkerhet hittade ni?
+  - Hur skulle tabellen kunna misstolkas?
 
-### 200 poäng: Excelbar tabell
+### 200 poäng: Rätt diagram – fel diagram
 
-- Kort etikett: Excel
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Excel
-- Uppgift: Välj en tabell och be Copilot Chat skapa en tydlig Excel-tabell med kolumnrubriker och förslag på ett diagram.
+- Kort etikett: Diagramval
+- Verktyg: Copilot i Excel
+- Appfokus: Copilot i Excel
+- Uppgift: Välj en tabell ur årsredovisningen och lägg in den i Excel. Be Copilot i Excel skapa två olika diagram. Välj vilket diagram som kommunicerar innehållet bäst och förklara hur det andra kan vilseleda.
 - Avgränsa källan: Använd en tabell som går att klistra in eller återskapa i Excel.
-- Lärandemål: Träna på att från chatten strukturera data för analys och visualisering.
+- Lärandemål: Träna på att skapa och kritiskt bedöma datavisualiseringar, inte bara acceptera första förslaget.
 - Reflektionsfrågor:
-  - Hur strukturerade ni tabellen?
-  - Vilket diagram föreslogs?
-  - Vad krävde manuell kontroll i Excel?
+  - Vilket diagram valde ni och varför?
+  - Hur kunde det andra diagrammet vilseleda?
+  - Vad behövde ni ändra manuellt?
 
-### 300 poäng: Skapa Excel-fil
+### 300 poäng: Formeldetektiven
 
-- Kort etikett: Excelark
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Excel
-- Uppgift: Be Copilot Chat skapa ett nytt Excel-kalkylblad utifrån en tabell eller sifferuppställning från årsredovisningen. Be om kolumner, enkel formatering, en beräknad kolumn och ett diagramförslag.
-- Avgränsa källan: Använd en tabell eller sifferuppställning som går att återskapa manuellt i Excel.
-- Lärandemål: Visa hur Copilot Chat kan skapa eller strukturera en Excel-fil, inte bara svara i chatten.
+- Kort etikett: Formelfel
+- Verktyg: Copilot i Excel
+- Appfokus: Copilot i Excel
+- Uppgift: Öppna den gemensamma filen Semesterplan-demo.xlsx i Excel. Be Copilot i Excel leta efter formler som avviker från mönstret, felvärden och hårdkodade tal där det borde finnas en formel. Undersök två misstänkta celler och kontrollera förslagen manuellt innan ni ändrar något.
+- Avgränsa källan: Använd endast den syntetiska övningsfilen. Ändra inget innan ni har granskat Copilots förklaring.
+- Lärandemål: Visa hur Copilot kan hjälpa till att felsöka en befintlig arbetsbok utan att ersätta mänsklig kontroll.
 - Reflektionsfrågor:
-  - Vilka kolumner skapades?
-  - Vilken beräkning eller visualisering föreslogs?
-  - Vad behövde ni kontrollera manuellt?
+  - Vilka två celler verkade misstänkta?
+  - Hur förklarade Copilot avvikelsen?
+  - Hade Copilot rätt när ni kontrollerade manuellt?
 
-### 400 poäng: Skapa en informationsbild
+### 400 poäng: Infografik från årsredovisningen
 
-- Kort etikett: Informationsbild
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> bild
-- Uppgift: Välj ett budskap från ett kort avsnitt och be Copilot Chat skapa en informationsbild som kan förklara budskapet visuellt. Om bildgenerering inte finns tillgänglig, be Copilot Chat skapa en färdig bildprompt.
-- Avgränsa källan: Använd ett kort avsnitt med ett tydligt huvudbudskap.
-- Lärandemål: Träna på bildpromptar med syfte, målgrupp, stil, begränsningar och myndighetskontext.
+- Kort etikett: Infografik
+- Verktyg: Microsoft 365 Copilot Create
+- Appfokus: Create -> Infografik
+- Uppgift: Öppna Create i Microsoft 365 Copilot och välj "Design an infographic". Lägg till årsredovisningen som källa och skapa en infografik för medborgare med högst tre huvudbudskap. Kontrollera alla siffror och formuleringar mot rapporten innan ni laddar ned bilden.
+- Avgränsa källan: Använd årsredovisningen som källa. Ha högst tre budskap och hitta inte på siffror.
+- Lärandemål: Visa hur ett befintligt dokument kan omvandlas till en konkret visuell produkt med källkontroll.
 - Reflektionsfrågor:
-  - Vilket budskap ville ni visualisera?
-  - Hur beskrev ni stil, målgrupp och innehåll?
-  - Skulle bilden fungera i myndighetskommunikation?
+  - Vilka tre budskap valde ni?
+  - Vilken uppgift faktakontrollerade ni?
+  - Vad skulle ni ändra innan publicering?
 
-### 500 poäng: Datainsikt med kontrollfrågor
+### 500 poäng: När är bemanningen som lägst?
 
-- Kort etikett: Datainsikt
-- Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> Excel
-- Uppgift: Välj en tabell eller sifferuppställning. Be Copilot Chat hitta en möjlig insikt, skapa eller beskriva en Excel-visualisering och lista tre kontrollfrågor innan slutsatsen används.
-- Avgränsa källan: Använd en tabell eller sifferuppställning där värden kan jämföras.
-- Lärandemål: Träna på dataanalys med mänsklig kontroll och ansvarsfull användning.
+- Kort etikett: Bemanning
+- Verktyg: Copilot i Excel
+- Appfokus: Copilot i Excel
+- Uppgift: Öppna Semesterplan-demo.xlsx i Excel. Be Copilot i Excel hitta de tre arbetsdagar som har lägst bemanning, markera dagar under minimibemanningen och skapa en enkel visualisering. Be sedan Copilot beskriva vad analysen inte tar hänsyn till.
+- Avgränsa källan: Använd endast den syntetiska semesterplanen och dess angivna minimibemanning.
+- Lärandemål: Träna på att använda en befintlig arbetsbok för en konkret verksamhetsfråga och granska analysens begränsningar.
 - Reflektionsfrågor:
-  - Vilken insikt föreslogs?
-  - Vilken visualisering passade bäst?
-  - Vilka kontrollfrågor måste besvaras innan man litar på slutsatsen?
+  - Vilka tre dagar hade lägst bemanning?
+  - Hur visade ni resultatet?
+  - Vad saknas för att kunna fatta ett riktigt bemanningsbeslut?
 
