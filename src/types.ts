@@ -36,6 +36,8 @@ export interface Tile {
   title: string;
   shortLabel: string;
   task: string;
+  presentationSteps: string[];
+  expectedResult: string;
   toolFocus: ToolFocus;
   appFocus: AppFocus;
   learningGoal: string;

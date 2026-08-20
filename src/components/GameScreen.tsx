@@ -501,7 +501,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   ).length;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 text-white lg:p-6">
+    <div className="min-h-screen bg-slate-950 p-2 text-white lg:p-3">
       {revealAnimation && (
         <TileRevealAnimation
           tiles={progress.tiles}
@@ -558,7 +558,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
             onToggleSound={toggleSound}
           />
 
-          <div className="mt-6 flex flex-col gap-6 xl:flex-row">
+          <div className="mt-2 flex flex-col gap-4 2xl:flex-row">
             <div className="min-w-0 flex-1">
               <GameBoard
                 tiles={progress.tiles}
@@ -570,7 +570,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
               />
             </div>
 
-            <div className="w-full xl:w-[27rem] xl:shrink-0">
+            <div className="w-full 2xl:w-[30rem] 2xl:shrink-0">
               <RoundFlow
                 roundPhase={roundState.phase}
                 timerRunning={roundState.timerRunning}

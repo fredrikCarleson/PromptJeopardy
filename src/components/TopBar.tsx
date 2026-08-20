@@ -88,71 +88,71 @@ export default function TopBar({
     <>
       {goalReached && <Confetti />}
 
-      <header className="rounded-lg border border-blue-500/40 bg-blue-950/70 p-5 shadow-xl" role="status" aria-live="polite">
-        <div className="mb-4 flex justify-end">
+      <header className="rounded-xl border border-blue-500/40 bg-blue-950/70 p-3 shadow-xl" role="status" aria-live="polite">
+        <div className="flex items-start gap-3">
+          <div className="grid min-w-0 flex-1 grid-cols-3 gap-3 md:grid-cols-6 md:gap-4">
+            <div className="relative text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Poäng</div>
+              <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`${currentScore} poäng`}>
+                {currentScore}
+              </div>
+              {showPointsPopup && lastPointsAdded && (
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 animate-bounce text-lg font-black text-yellow-200">
+                  +{lastPointsAdded}
+                </div>
+              )}
+            </div>
+            <div className="text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Mål</div>
+              <div className="text-3xl font-black text-yellow-100 2xl:text-4xl" aria-label={`Mål: ${targetScore} poäng`}>
+                {targetScore}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Kvar</div>
+              <div className="text-3xl font-black text-amber-200 2xl:text-4xl" aria-label={`${remainingScore} poäng kvar`}>
+                {remainingScore}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Runda</div>
+              <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`Runda ${roundCount}`}>
+                {roundCount}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Klara rutor</div>
+              <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`${completedCount} av ${totalTiles} rutor klara`}>
+                {completedCount}/{totalTiles}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Senast</div>
+              <div className="truncate text-xl font-bold text-white 2xl:text-2xl" aria-label={lastPresenter ? `Senast presenterade: ${lastPresenter}` : 'Ingen presentation ännu'}>
+                {lastPresenter || '-'}
+              </div>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={onToggleSound}
-            className="flex items-center gap-2 rounded-md bg-blue-900 px-3 py-2 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-800"
+            className="flex shrink-0 items-center gap-2 rounded-md bg-blue-900 p-2.5 text-sm font-semibold text-blue-100 transition-colors hover:bg-blue-800 lg:px-3"
             aria-label={soundEnabled ? 'Stäng av ljud' : 'Slå på ljud'}
           >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            {soundEnabled ? 'Ljud på' : 'Ljud av'}
+            {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+            <span className="hidden lg:inline">{soundEnabled ? 'Ljud på' : 'Ljud av'}</span>
           </button>
         </div>
 
         {goalReached && (
-          <div className="mb-4 rounded-md bg-yellow-300 px-6 py-4 text-center text-2xl font-black text-slate-950">
+          <div className="mt-3 rounded-md bg-yellow-300 px-6 py-3 text-center text-2xl font-black text-slate-950">
             Poängmålet är nått. Alla klarade spelet tillsammans.
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
-          <div className="relative text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Poäng</div>
-            <div className="text-4xl font-black text-white" aria-label={`${currentScore} poäng`}>
-              {currentScore}
-            </div>
-            {showPointsPopup && lastPointsAdded && (
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 animate-bounce text-lg font-black text-yellow-200">
-                +{lastPointsAdded}
-              </div>
-            )}
-          </div>
-          <div className="text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Mål</div>
-            <div className="text-4xl font-black text-yellow-100" aria-label={`Mål: ${targetScore} poäng`}>
-              {targetScore}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Kvar</div>
-            <div className="text-4xl font-black text-amber-200" aria-label={`${remainingScore} poäng kvar`}>
-              {remainingScore}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Runda</div>
-            <div className="text-4xl font-black text-white" aria-label={`Runda ${roundCount}`}>
-              {roundCount}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Klara rutor</div>
-            <div className="text-4xl font-black text-white" aria-label={`${completedCount} av ${totalTiles} rutor klara`}>
-              {completedCount}/{totalTiles}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="mb-1 text-xs font-bold uppercase text-blue-200/80">Senast presenterade</div>
-            <div className="truncate text-xl font-bold text-white" aria-label={lastPresenter ? `Senast presenterade: ${lastPresenter}` : 'Ingen presentation ännu'}>
-              {lastPresenter || '-'}
-            </div>
-          </div>
-        </div>
-
         <div
-          className="mt-5 h-4 w-full overflow-hidden rounded-full bg-blue-900"
+          className="mt-2 h-2 w-full overflow-hidden rounded-full bg-blue-900"
           role="progressbar"
           aria-valuenow={currentScore}
           aria-valuemin={0}

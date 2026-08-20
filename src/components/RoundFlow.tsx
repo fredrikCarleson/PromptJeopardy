@@ -39,12 +39,12 @@ const StepIndicator = ({
   completed: boolean;
 }) => (
   <div
-    className={`flex items-center gap-2 rounded px-2 py-1 text-xs font-semibold ${
+    className={`flex items-center gap-2 rounded px-2 py-1.5 text-sm font-semibold ${
       active ? 'bg-yellow-300/15 text-yellow-100' : completed ? 'text-emerald-300' : 'text-slate-500'
     }`}
   >
     <span
-      className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${
+      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
         active ? 'bg-yellow-300 text-slate-950' : completed ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'
       }`}
     >
@@ -83,13 +83,8 @@ export default function RoundFlow({
   const isChoosing = roundPhase === 'choosing_next_tile';
 
   return (
-    <aside className="space-y-4 rounded-lg border border-slate-700 bg-slate-900 p-5 shadow-xl">
-      <div>
-        <h2 className="text-xl font-bold text-white">Facilitatorflöde</h2>
-        <p className="mt-1 text-sm text-slate-400">
-          Appen styr tavlan och poängen. Deltagarna arbetar och presenterar från sina egna datorer.
-        </p>
-      </div>
+    <aside className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-xl lg:p-5">
+      <h2 className="text-2xl font-bold text-white">Facilitatorflöde</h2>
 
       <div className="flex flex-wrap gap-1">
         <StepIndicator number="1" label="Välj" active={isSelecting} completed={!isSelecting} />
@@ -152,16 +147,27 @@ export default function RoundFlow({
 
       {isWorking && activeTile && (
         <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
-          <div className="font-semibold text-emerald-200">Arbete i par</div>
+          <div className="text-lg font-bold text-emerald-200">Arbete i par</div>
 
-          <div className="rounded-md bg-slate-800 p-3">
-            <div className="text-xs uppercase text-slate-400">{TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng</div>
-            <div className="mt-1 text-base font-bold text-white">{activeTile.title}</div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">{activeTile.task}</p>
-            <div className="mt-3 rounded border border-slate-700 bg-slate-950/60 p-2 text-xs text-slate-300">
-              <span className="font-semibold text-slate-100">Källa:</span> {activeTile.sourceInstruction}
+          <div className="rounded-lg bg-slate-800 p-4">
+            <div className="text-sm font-bold uppercase text-slate-300">{TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng</div>
+            <div className="mt-1 text-xl font-bold text-white">{activeTile.title}</div>
+            <ol className="mt-3 space-y-2 text-lg font-medium leading-snug text-white">
+              {activeTile.presentationSteps.map((step, index) => (
+                <li key={step} className="flex gap-2">
+                  <span className="font-black text-blue-300">{index + 1}.</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-4 rounded-lg border border-emerald-400/30 bg-emerald-400/10 p-3 text-base text-emerald-50">
+              <div className="mb-1 text-sm font-black uppercase text-emerald-200">Ni ska visa</div>
+              {activeTile.expectedResult}
             </div>
-            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+            <div className="mt-3 rounded-lg border border-slate-600 bg-slate-950/70 p-3 text-base leading-snug text-slate-100">
+              <span className="font-bold text-white">Källa:</span> {activeTile.sourceInstruction}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2 text-sm">
               <span className="rounded border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-emerald-100">
                 {activeTile.toolFocus}
               </span>
@@ -172,8 +178,8 @@ export default function RoundFlow({
           </div>
 
           <div className="rounded-md border border-slate-700 bg-slate-950/60 p-3">
-            <div className="text-xs font-bold uppercase text-slate-400">Promptrecept</div>
-            <div className="mt-2 grid gap-2 text-xs text-slate-200 sm:grid-cols-2">
+            <div className="text-sm font-bold uppercase text-slate-300">Promptrecept</div>
+            <div className="mt-2 grid gap-2 text-sm text-slate-100 sm:grid-cols-2">
               <span>1. Roll eller målgrupp</span>
               <span>2. Avgränsad källa</span>
               <span>3. Tydlig uppgift</span>
@@ -183,7 +189,7 @@ export default function RoundFlow({
           </div>
 
           <div
-            className={`rounded-md py-3 text-center font-mono text-5xl font-bold ${
+            className={`rounded-lg py-3 text-center font-mono text-6xl font-bold ${
               timeRemaining <= 30 ? 'bg-red-500/20 text-red-200' : 'bg-slate-800 text-white'
             }`}
             role="timer"
@@ -195,7 +201,7 @@ export default function RoundFlow({
           <button
             type="button"
             onClick={onStartTimer}
-            className={`flex w-full items-center justify-center gap-2 rounded-md py-2.5 font-semibold text-white transition-colors ${
+            className={`flex w-full items-center justify-center gap-2 rounded-md py-3 text-base font-semibold text-white transition-colors ${
               timerRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
             }`}
           >
@@ -206,7 +212,7 @@ export default function RoundFlow({
           <button
             type="button"
             onClick={onGoToPresenting}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-700 py-2.5 font-semibold text-white transition-colors hover:bg-slate-600"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-700 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-600"
           >
             <Presentation size={18} />
             Gå till muntlig redovisning
@@ -215,7 +221,7 @@ export default function RoundFlow({
           <button
             type="button"
             onClick={onCancelCurrentTile}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-2.5 font-semibold text-slate-200 transition-colors hover:bg-slate-700"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-3 text-base font-semibold text-slate-100 transition-colors hover:bg-slate-700"
           >
             <XCircle size={18} />
             Byt ruta om uppgiften inte går att genomföra

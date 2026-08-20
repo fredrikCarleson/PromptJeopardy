@@ -28,6 +28,11 @@ export const buildQuestionsPlainText = (): string => {
       lines.push(`Lärandemål: ${tile.learningGoal}`);
       lines.push(`Avgränsa källan: ${tile.sourceInstruction}`);
       lines.push(`Uppgift: ${tile.task}`);
+      lines.push('Gör så här:');
+      tile.presentationSteps.forEach((step, stepIndex) => {
+        lines.push(`  ${stepIndex + 1}. ${step}`);
+      });
+      lines.push(`Förväntat resultat: ${tile.expectedResult}`);
       lines.push('Reflektionsfrågor:');
       tile.verbalPresentationPrompt.forEach((prompt, promptIndex) => {
         lines.push(`  ${promptIndex + 1}. ${prompt}`);

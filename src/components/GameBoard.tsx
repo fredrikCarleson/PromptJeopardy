@@ -49,7 +49,7 @@ export default function GameBoard({
               : `${TOPIC_LABELS[tile.topic]} ${tile.points} poäng`
         }
         className={[
-          'relative flex min-h-[92px] w-full flex-col items-center justify-center rounded-md border-2 p-2 text-center shadow-lg transition-all',
+          'relative flex min-h-[clamp(60px,8.7vh,108px)] w-full flex-col items-center justify-center rounded-lg border-2 p-2 text-center shadow-lg transition-all',
           isActive ? `${styles.active} ring-4` : '',
           isCompleted ? `${styles.completed}` : '',
           !isActive && !isCompleted ? `${styles.tile}` : '',
@@ -59,17 +59,17 @@ export default function GameBoard({
       >
         {isCompleted ? (
           <>
-            <CheckCircle className="absolute right-2 top-2 h-4 w-4 opacity-80" />
-            <span className="line-clamp-3 text-xs font-semibold leading-tight">{tile.shortLabel}</span>
-            <span className="mt-1 text-[11px] font-bold opacity-70">{tile.points}</span>
+            <CheckCircle className="absolute right-2 top-2 h-5 w-5 opacity-90" />
+            <span className="line-clamp-3 text-[clamp(0.95rem,1.05vw,1.2rem)] font-bold leading-tight">{tile.shortLabel}</span>
+            <span className="mt-1 text-sm font-bold opacity-80 lg:text-base">{tile.points}</span>
           </>
         ) : isActive ? (
           <>
-            <span className="text-[11px] font-black uppercase tracking-wider">Vald ruta</span>
-            <span className="mt-1 line-clamp-2 text-sm font-bold leading-tight">{tile.shortLabel}</span>
+            <span className="text-sm font-black uppercase tracking-wide lg:text-base">Vald ruta</span>
+            <span className="mt-1 line-clamp-2 text-[clamp(1rem,1.25vw,1.45rem)] font-black leading-tight">{tile.shortLabel}</span>
           </>
         ) : (
-          <span className="text-3xl font-black tracking-normal text-yellow-100 drop-shadow sm:text-4xl">
+          <span className="text-[clamp(2rem,3.2vw,3.75rem)] font-black tracking-normal text-yellow-100 drop-shadow">
             {tile.points}
           </span>
         )}
@@ -78,26 +78,26 @@ export default function GameBoard({
   };
 
   return (
-    <section className="rounded-lg border border-blue-500/40 bg-blue-950/60 p-3 shadow-2xl shadow-black/30">
-      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <section className="rounded-xl border border-blue-500/50 bg-blue-950/60 p-2.5 shadow-2xl shadow-black/30 sm:p-3">
+      <div className="mb-2.5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-black uppercase tracking-normal text-yellow-100">Prompt-Jeopardy</h2>
-          <p className="text-sm text-blue-100/80">
+          <h2 className="text-[clamp(1.65rem,2vw,2.5rem)] font-black uppercase tracking-normal text-yellow-100">Prompt-Jeopardy</h2>
+          <p className="text-base text-blue-100/90 lg:text-lg">
             Välj poängruta. Uppgiften är dold tills rutan väljs.
           </p>
         </div>
         {!manualSelectionEnabled && (
-          <div className="rounded-md border border-yellow-300/40 bg-yellow-300/10 px-3 py-2 text-sm font-semibold text-yellow-100">
+          <div className="rounded-md border border-yellow-300/50 bg-yellow-300/10 px-3 py-1.5 text-base font-semibold text-yellow-100">
             {mode === 'guided_workshop' ? 'Starta från facilitatorpanelen' : 'Första rutan slumpas'}
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
         {TOPICS.map((topic) => (
           <div
             key={topic}
-            className={`flex min-h-[58px] items-center justify-center rounded-md border px-2 py-3 text-center text-xs font-black uppercase leading-tight tracking-normal sm:text-sm ${TOPIC_STYLES[topic].header}`}
+            className={`flex min-h-[clamp(44px,6vh,72px)] items-center justify-center rounded-lg border px-2 py-2 text-center text-[clamp(1rem,1.15vw,1.35rem)] font-black uppercase leading-tight tracking-normal ${TOPIC_STYLES[topic].header}`}
           >
             {TOPIC_LABELS[topic]}
           </div>

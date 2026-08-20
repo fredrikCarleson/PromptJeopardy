@@ -9,6 +9,14 @@ npm install
 npm run dev
 ```
 
+## Classroom display
+
+- Run the browser in fullscreen mode (`F11`) and keep browser zoom at 100%.
+- The participant-facing task modal is designed for 16:9 projectors and large TVs.
+- Keep the task view open until everyone has read the numbered steps, expected result, and source limit.
+- The board uses its full width at common 720p and 768p projector resolutions; facilitator controls move below it when horizontal space is limited.
+- Before a workshop, check the app at the actual projector resolution from the back of the room.
+
 ## Recommended one-hour format
 
 - Use `60 min workshop` mode.
