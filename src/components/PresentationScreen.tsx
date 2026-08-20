@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, Pause, Play } from 'lucide-react';
+import { CheckCircle, ClipboardList, Pause, Play } from 'lucide-react';
 import { Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -58,38 +58,60 @@ export default function PresentationScreen({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-6"
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950 p-3 text-white sm:p-5 2xl:p-7"
       role="dialog"
       aria-modal="true"
       aria-label="Muntlig reflektion"
     >
-      <div className="w-full max-w-5xl space-y-6">
+      <div className="mx-auto grid min-h-[calc(100dvh-1.5rem)] w-full max-w-[96rem] content-center gap-4 sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-[calc(100dvh-3.5rem)] 2xl:gap-6">
         <div className="text-center">
-          <div className="text-sm font-bold uppercase tracking-widest text-yellow-200">Presenterande par</div>
-          <div className="mt-2 text-5xl font-black text-white lg:text-7xl">{pairName}</div>
-          <p className="mt-3 text-lg text-slate-300">
+          <div className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-1">
+            <span className="text-lg font-bold uppercase tracking-widest text-yellow-200 lg:text-xl">Presenterande par</span>
+            <span className="text-[clamp(3.25rem,4.5vw,5rem)] font-black leading-none text-white">{pairName}</span>
+          </div>
+          <p className="mt-2 text-[clamp(1.25rem,1.5vw,1.75rem)] font-medium text-slate-200">
             Visa resultatet från er egen dator och beskriv hur ni promptade.
           </p>
         </div>
 
         {activeTile && (
-          <div className="rounded-lg border border-blue-500/40 bg-blue-950/50 p-5 text-center">
-            <div className="text-xs font-bold uppercase tracking-wider text-blue-200">
-              {TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng · {activeTile.toolFocus} · {activeTile.appFocus}
+          <section className="rounded-2xl border border-blue-400/50 bg-blue-950/60 p-4 sm:p-5 2xl:p-6">
+            <div className="text-center text-base font-bold uppercase tracking-wide text-blue-100 lg:text-lg">
+              {TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng
             </div>
-            <div className="mt-2 text-2xl font-bold text-white">{activeTile.title}</div>
-            <p className="mx-auto mt-2 max-w-3xl text-sm leading-relaxed text-blue-100/90">{activeTile.task}</p>
-          </div>
+            <h2 className="mt-1 text-center text-[clamp(2rem,2.8vw,3.25rem)] font-black leading-tight text-white">
+              {activeTile.title}
+            </h2>
+
+            <div className="mt-4 grid gap-3 xl:grid-cols-3">
+              {activeTile.presentationSteps.map((step, index) => (
+                <div key={step} className="flex items-start gap-3 rounded-xl bg-slate-900/80 p-4 2xl:p-5">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xl font-black text-white lg:h-12 lg:w-12 lg:text-2xl">
+                    {index + 1}
+                  </span>
+                  <p className="text-[clamp(1.5rem,1.75vw,2rem)] font-semibold leading-snug text-white">{step}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3 flex items-start justify-center gap-3 rounded-xl border border-emerald-400/40 bg-emerald-400/10 p-3 text-center 2xl:p-4">
+              <ClipboardList className="mt-0.5 h-6 w-6 shrink-0 text-emerald-200 lg:h-7 lg:w-7" />
+              <p className="text-[clamp(1.4rem,1.65vw,1.9rem)] font-bold leading-snug text-emerald-50">
+                <span className="mr-2 uppercase text-emerald-200">Ni ska visa:</span>
+                {activeTile.expectedResult}
+              </p>
+            </div>
+          </section>
         )}
 
         {activeTile && (
           <div className="grid gap-4 md:grid-cols-3">
             {activeTile.verbalPresentationPrompt.map((prompt, index) => (
-              <div key={prompt} className="rounded-lg border border-slate-700 bg-slate-900 p-5">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-yellow-300 text-lg font-black text-slate-950">
+              <div key={prompt} className="flex items-center gap-4 rounded-xl border border-slate-600 bg-slate-900 p-4 2xl:p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-300 text-xl font-black text-slate-950 lg:h-12 lg:w-12 lg:text-2xl">
                   {index + 1}
                 </div>
-                <p className="text-lg font-semibold leading-snug text-white">{prompt}</p>
+                <p className="text-[clamp(1.4rem,1.7vw,2rem)] font-semibold leading-snug text-white">{prompt}</p>
               </div>
             ))}
           </div>
@@ -97,7 +119,7 @@ export default function PresentationScreen({
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
           <div
-            className={`rounded-lg px-8 py-4 text-center font-mono text-6xl font-black ${
+            className={`rounded-lg px-7 py-3 text-center font-mono text-5xl font-black 2xl:text-6xl ${
               timeRemaining <= 10
                 ? 'bg-red-500/20 text-red-200'
                 : timeRemaining <= 30
@@ -114,7 +136,7 @@ export default function PresentationScreen({
             <button
               type="button"
               onClick={() => setIsRunning((prev) => !prev)}
-              className={`flex items-center gap-2 rounded-md px-6 py-3 font-semibold text-white transition-colors ${
+              className={`flex items-center gap-2 rounded-md px-6 py-3 text-lg font-semibold text-white transition-colors ${
                 isRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
               }`}
             >
@@ -124,7 +146,7 @@ export default function PresentationScreen({
             <button
               type="button"
               onClick={onFinish}
-              className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-500"
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-6 py-3 text-lg font-semibold text-white transition-colors hover:bg-blue-500"
             >
               <CheckCircle size={18} />
               Klar

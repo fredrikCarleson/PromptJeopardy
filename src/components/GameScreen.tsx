@@ -345,6 +345,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }));
   }, []);
 
+  const showActiveTask = useCallback(() => {
+    const activeTileId = roundStateRef.current.activeTileId;
+    if (activeTileId !== null) setSelectedTileForModal(activeTileId);
+  }, []);
+
   const goToPresenting = useCallback(() => {
     setRoundState((prev) => ({
       ...prev,
@@ -579,6 +584,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 onSelectRandomTile={selectRandomStartTile}
                 onSelectRecommendedTile={selectRecommendedTile}
                 onStartTimer={startTimer}
+                onShowTask={showActiveTask}
                 onGoToPresenting={goToPresenting}
                 onSelectRandomPresenter={selectRandomPresenter}
                 onShowPresentation={showPresentation}

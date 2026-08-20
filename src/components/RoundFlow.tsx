@@ -1,4 +1,4 @@
-import { CheckCircle, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
+import { CheckCircle, Maximize2, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
 import { RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -11,6 +11,7 @@ interface RoundFlowProps {
   onSelectRandomTile: () => void;
   onSelectRecommendedTile: () => void;
   onStartTimer: () => void;
+  onShowTask: () => void;
   onGoToPresenting: () => void;
   onSelectRandomPresenter: () => void;
   onShowPresentation: () => void;
@@ -62,6 +63,7 @@ export default function RoundFlow({
   onSelectRandomTile,
   onSelectRecommendedTile,
   onStartTimer,
+  onShowTask,
   onGoToPresenting,
   onSelectRandomPresenter,
   onShowPresentation,
@@ -148,6 +150,15 @@ export default function RoundFlow({
       {isWorking && activeTile && (
         <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
           <div className="text-lg font-bold text-emerald-200">Arbete i par</div>
+
+          <button
+            type="button"
+            onClick={onShowTask}
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-blue-300/50 bg-blue-600 px-4 py-3 text-lg font-black text-white shadow-lg shadow-blue-950/30 transition-colors hover:bg-blue-500"
+          >
+            <Maximize2 size={24} />
+            Visa uppgiften stort
+          </button>
 
           <div className="rounded-lg bg-slate-800 p-4">
             <div className="text-sm font-bold uppercase text-slate-300">{TOPIC_LABELS[activeTile.topic]} · {activeTile.points} poäng</div>
