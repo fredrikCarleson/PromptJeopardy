@@ -25,9 +25,9 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border border-blue-500/30 bg-slate-900 p-5">
             <Users className="mb-4 h-8 w-8 text-blue-300" />
-            <h3 className="text-lg font-bold">25 par</h3>
+            <h3 className="text-lg font-bold">20–40 deltagare</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              Alla par arbetar samtidigt med samma valda ruta och lär av varandras promptar.
+              Ungefär 10–20 par arbetar samtidigt med samma valda ruta och lär av varandras promptar.
             </p>
           </div>
 
@@ -62,7 +62,7 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
             {[
               ['1', 'Starta eller välj ruta', 'Facilitatorn startar första rundan. Senare kan paret välja eller följa banan.'],
               ['2', 'Arbeta i par', 'Alla använder en vald del av årsredovisningen, inte hela rapporten.'],
-              ['3', 'Redovisa muntligt', 'Ett par slumpas och visar resultatet från sin egen dator.'],
+              ['3', 'Presentera och granska', 'Ett par visar resultatet. Ett annat lyfter en styrka eller kontrollfråga.'],
               ['4', 'Lägg till poäng', 'Rutan låses, poängen läggs till och nästa runda börjar.'],
             ].map(([number, title, body]) => (
               <div key={number} className="rounded-md bg-slate-950/50 p-4">

@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, ClipboardList, FileText, Target, X } from 'lucide-react';
+import { CheckCircle2, ClipboardList, FileText, Play, Sparkles, Target, X } from 'lucide-react';
 import { Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { TOPIC_STYLES } from '../utils/categoryStyles';
+import { formatTime } from '../utils/formatTime';
 
 interface TileModalProps {
   tile: Tile;
   onClose: () => void;
+  timeRemaining: number;
+  timerRunning: boolean;
+  onStartWork: () => void;
 }
 
-export default function TileModal({ tile, onClose }: TileModalProps) {
+export default function TileModal({ tile, onClose, timeRemaining, timerRunning, onStartWork }: TileModalProps) {
   const [activeTab, setActiveTab] = useState<'task' | 'learning'>('task');
 
   useEffect(() => {
@@ -141,6 +145,18 @@ export default function TileModal({ tile, onClose }: TileModalProps) {
                     {tile.sourceInstruction}
                   </p>
                 </section>
+
+                {tile.bonusChallenge && (
+                  <section className="rounded-2xl border border-yellow-300/40 bg-yellow-300/10 p-5 sm:p-6 lg:p-7">
+                    <h3 className="mb-3 flex items-center gap-3 text-lg font-black uppercase tracking-wide text-yellow-200 lg:text-xl">
+                      <Sparkles className="h-6 w-6" />
+                      Klart tidigt?
+                    </h3>
+                    <p className="text-[clamp(1.3rem,1.45vw,1.9rem)] font-semibold leading-snug text-yellow-50">
+                      {tile.bonusChallenge}
+                    </p>
+                  </section>
+                )}
               </div>
             </div>
           ) : (
@@ -166,6 +182,34 @@ export default function TileModal({ tile, onClose }: TileModalProps) {
               </section>
             </div>
           )}
+        </div>
+
+        <div className="flex shrink-0 flex-col items-center justify-between gap-3 border-t border-slate-700 bg-slate-950/90 px-5 py-3 sm:flex-row sm:px-7 lg:px-10">
+          <div className="text-center sm:text-left">
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-400">Arbetstid</div>
+            <div className="font-mono text-3xl font-black text-white">{formatTime(timeRemaining)}</div>
+          </div>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md bg-slate-800 px-5 py-3 font-bold text-slate-100 transition-colors hover:bg-slate-700"
+            >
+              {timerRunning ? 'Stäng – tiden fortsätter' : 'Stäng utan att starta'}
+            </button>
+            <button
+              type="button"
+              onClick={onStartWork}
+              className="flex items-center justify-center gap-2 rounded-md bg-emerald-600 px-6 py-3 font-bold text-white transition-colors hover:bg-emerald-500"
+            >
+              <Play size={20} />
+              {timerRunning
+                ? 'Stäng och fortsätt arbeta'
+                : timeRemaining === 0
+                  ? 'Stäng – tiden är slut'
+                  : `Starta ${formatTime(timeRemaining)} och stäng`}
+            </button>
+          </div>
         </div>
       </div>
     </div>

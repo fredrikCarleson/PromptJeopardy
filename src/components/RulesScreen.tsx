@@ -52,9 +52,9 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
               Arbete i par
             </h2>
             <p className="leading-relaxed text-slate-200">
-              Varje par använder sin egen dator och arbetar i Microsoft 365 Copilot Chat. Vissa uppgifter ber dem skapa,
-              hitta, jämföra eller sammanfatta material som Word-dokument, PowerPoint, Excel-tabeller, bilder eller filer
-              de har behörighet till. Appen på stor skärm visar bara rutan, timer, poäng och reflektionsfrågor.
+              Varje par använder sin egen dator och arbetar i Copilot Chat eller den app som står i uppgiften, exempelvis
+              Word, Excel eller Create. De skapar, hittar, jämför och granskar verkliga arbetsprodukter. Appen på stor skärm
+              visar bara rutan, timer, poäng och reflektionsfrågor.
             </p>
           </section>
 
@@ -67,7 +67,7 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
               {[
                 ['1. Välj ruta', 'I workshopläget följer ni en rekommenderad femrundors bana. I fri tavla slumpas första rutan och senare kan paret välja.'],
                 ['2. Arbeta', 'Alla par arbetar med samma uppgift under timern och väljer själva en relevant del av rapporten.'],
-                ['3. Redovisa', 'Ett par slumpas. De visar sitt resultat från egen dator och beskriver hur de promptade.'],
+                ['3. Redovisa', 'Ett presenterande par visar resultatet. Ett annat granskarpar lyfter en styrka eller ställer en kontrollfråga. Par som ännu inte haft en roll prioriteras.'],
                 ['4. Poäng', 'Facilitatorn markerar rutan som klar. Den blir låst och synlig på tavlan.'],
               ].map(([title, body]) => (
                 <div key={title} className="rounded-md bg-slate-800 p-4">
@@ -83,6 +83,14 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
             <p className="leading-relaxed text-slate-200">
               Varje prompt bör göra fem saker tydliga: roll eller målgrupp, avgränsad källa, uppgift, önskat format och
               vad en människa fortfarande behöver kontrollera. Det är den röda tråden genom hela spelet.
+            </p>
+          </section>
+
+          <section className="rounded-lg border border-emerald-500/30 bg-slate-900 p-6">
+            <h2 className="mb-3 text-2xl font-bold text-white">Om ett par blir klart tidigt</h2>
+            <p className="leading-relaxed text-slate-200">
+              De fem rekommenderade uppgifterna har en frivillig extrauppgift. Den ger snabbare par något att fördjupa
+              utan att övriga behöver stressa eller att grundtiden ändras.
             </p>
           </section>
 

@@ -42,7 +42,7 @@ export default function SpecialMomentScreen({
         <div className="rounded-lg border border-slate-700 bg-slate-900 p-5">
           <div className="flex items-center gap-2 text-sm font-bold uppercase text-slate-300">
             <Lightbulb size={18} />
-            Till facilitatorn
+            Så gör vi tillsammans
           </div>
           <p className="mt-3 text-base leading-relaxed text-slate-200">{moment.facilitatorCue}</p>
         </div>

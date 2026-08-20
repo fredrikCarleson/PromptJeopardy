@@ -33,6 +33,7 @@ export const buildQuestionsPlainText = (): string => {
         lines.push(`  ${stepIndex + 1}. ${step}`);
       });
       lines.push(`Förväntat resultat: ${tile.expectedResult}`);
+      if (tile.bonusChallenge) lines.push(`Klart tidigt: ${tile.bonusChallenge}`);
       lines.push('Reflektionsfrågor:');
       tile.verbalPresentationPrompt.forEach((prompt, promptIndex) => {
         lines.push(`  ${promptIndex + 1}. ${prompt}`);

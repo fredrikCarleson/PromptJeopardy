@@ -4,9 +4,14 @@ import RulesScreen from './components/RulesScreen';
 import SetupScreen from './components/SetupScreen';
 import GameScreen from './components/GameScreen';
 import { GameConfig } from './types';
-import { GUIDED_WORKSHOP_TILE_IDS } from './data/tiles';
+import { GUIDED_WORKSHOP_TILE_IDS, TILES } from './data/tiles';
 
 type AppScreen = 'onboarding' | 'rules' | 'setup' | 'playing';
+
+const guidedWorkshopTarget = GUIDED_WORKSHOP_TILE_IDS.reduce((sum, tileId) => {
+  const tile = TILES.find((candidate) => candidate.id === tileId);
+  return sum + (tile?.points ?? 0);
+}, 0);
 
 function App() {
   const [screen, setScreen] = useState<AppScreen>('onboarding');
@@ -17,19 +22,21 @@ function App() {
     if (saved) {
       try {
         const parsedConfig = JSON.parse(saved) as Partial<GameConfig>;
+        const mode = parsedConfig.mode ?? 'guided_workshop';
         const normalizedConfig: GameConfig = {
-          mode: parsedConfig.mode ?? 'guided_workshop',
-          numPairs: parsedConfig.numPairs ?? parsedConfig.pairNames?.length ?? 25,
+          mode,
+          numPairs: parsedConfig.numPairs ?? parsedConfig.pairNames?.length ?? 15,
           pairNames:
             parsedConfig.pairNames ??
-            Array.from({ length: parsedConfig.numPairs ?? 25 }, (_, index) => `Par ${index + 1}`),
-          targetScore: parsedConfig.targetScore ?? 1700,
+            Array.from({ length: parsedConfig.numPairs ?? 15 }, (_, index) => `Par ${index + 1}`),
+          targetScore:
+            mode === 'guided_workshop' && parsedConfig.targetScore === 1700
+              ? guidedWorkshopTarget
+              : parsedConfig.targetScore ?? (mode === 'guided_workshop' ? guidedWorkshopTarget : 2100),
           timerMinutes: parsedConfig.timerMinutes ?? 5,
           presentationSeconds: parsedConfig.presentationSeconds ?? 75,
           avoidRepeatingPresenter: parsedConfig.avoidRepeatingPresenter ?? true,
-          plannedTileIds:
-            parsedConfig.plannedTileIds ??
-            (parsedConfig.mode === 'open_board' ? [] : GUIDED_WORKSHOP_TILE_IDS),
+          plannedTileIds: mode === 'open_board' ? [] : GUIDED_WORKSHOP_TILE_IDS,
         };
         setConfig(normalizedConfig);
         setScreen('playing');

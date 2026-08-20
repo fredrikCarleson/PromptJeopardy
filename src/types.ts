@@ -49,6 +49,7 @@ export interface Tile {
   appFocus: AppFocus;
   learningGoal: string;
   sourceInstruction: string;
+  bonusChallenge?: string;
   verbalPresentationPrompt: string[];
   status: TileStatus;
 }

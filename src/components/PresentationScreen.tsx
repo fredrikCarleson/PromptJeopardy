@@ -7,6 +7,7 @@ import { playTimerWarning } from '../utils/soundEffects';
 
 interface PresentationScreenProps {
   pairName: string;
+  reviewerName: string | null;
   activeTile: Tile | undefined;
   durationSeconds: number;
   soundEnabled: boolean;
@@ -15,6 +16,7 @@ interface PresentationScreenProps {
 
 export default function PresentationScreen({
   pairName,
+  reviewerName,
   activeTile,
   durationSeconds,
   soundEnabled,
@@ -64,14 +66,19 @@ export default function PresentationScreen({
       aria-label="Muntlig reflektion"
     >
       <div className="mx-auto grid min-h-[calc(100dvh-1.5rem)] w-full max-w-[96rem] content-center gap-4 sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-[calc(100dvh-3.5rem)] 2xl:gap-6">
-        <div className="text-center">
-          <div className="flex flex-wrap items-baseline justify-center gap-x-5 gap-y-1">
-            <span className="text-lg font-bold uppercase tracking-widest text-yellow-200 lg:text-xl">Presenterande par</span>
-            <span className="text-[clamp(3.25rem,4.5vw,5rem)] font-black leading-none text-white">{pairName}</span>
+        <div className="grid gap-3 text-center md:grid-cols-2">
+          <div className="rounded-xl border border-blue-400/40 bg-blue-500/10 p-3">
+            <div className="text-base font-bold uppercase tracking-widest text-blue-200 lg:text-lg">Presenterande par</div>
+            <div className="mt-1 text-[clamp(2.5rem,3.6vw,4rem)] font-black leading-none text-white">{pairName}</div>
+            <p className="mt-2 text-lg font-medium text-slate-200">Visa resultatet och beskriv hur ni promptade.</p>
           </div>
-          <p className="mt-2 text-[clamp(1.25rem,1.5vw,1.75rem)] font-medium text-slate-200">
-            Visa resultatet från er egen dator och beskriv hur ni promptade.
-          </p>
+          {reviewerName && (
+            <div className="rounded-xl border border-yellow-300/40 bg-yellow-300/10 p-3">
+              <div className="text-base font-bold uppercase tracking-widest text-yellow-200 lg:text-lg">Granskarpar</div>
+              <div className="mt-1 text-[clamp(2.5rem,3.6vw,4rem)] font-black leading-none text-white">{reviewerName}</div>
+              <p className="mt-2 text-lg font-medium text-slate-200">Ni har 20 sekunder: lyft en styrka eller ställ en kontrollfråga.</p>
+            </div>
+          )}
         </div>
 
         {activeTile && (

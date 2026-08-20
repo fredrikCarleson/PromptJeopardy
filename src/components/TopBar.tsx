@@ -5,8 +5,10 @@ interface TopBarProps {
   currentScore: number;
   targetScore: number;
   roundCount: number;
+  roundTotal?: number;
   completedCount: number;
   totalTiles: number;
+  completedLabel?: string;
   lastPresenter: string | null;
   goalReached: boolean;
   lastPointsAdded?: number;
@@ -64,8 +66,10 @@ export default function TopBar({
   currentScore,
   targetScore,
   roundCount,
+  roundTotal,
   completedCount,
   totalTiles,
+  completedLabel = 'Klara rutor',
   lastPresenter,
   goalReached,
   lastPointsAdded,
@@ -116,12 +120,12 @@ export default function TopBar({
             </div>
             <div className="text-center">
               <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Runda</div>
-              <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`Runda ${roundCount}`}>
-                {roundCount}
+              <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`Runda ${roundCount}${roundTotal ? ` av ${roundTotal}` : ''}`}>
+                {roundCount}{roundTotal ? `/${roundTotal}` : ''}
               </div>
             </div>
             <div className="text-center">
-              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">Klara rutor</div>
+              <div className="mb-0.5 text-xs font-bold uppercase text-blue-100/90 sm:text-sm">{completedLabel}</div>
               <div className="text-3xl font-black text-white 2xl:text-4xl" aria-label={`${completedCount} av ${totalTiles} rutor klara`}>
                 {completedCount}/{totalTiles}
               </div>

@@ -16,7 +16,7 @@ export const TOPIC_LABELS: Record<TileTopic, string> = {
   'Data och bild': 'Data & bild',
 };
 
-export const GUIDED_WORKSHOP_TILE_IDS = [2, 9, 23, 24, 25];
+export const GUIDED_WORKSHOP_TILE_IDS = [2, 9, 24, 23, 25];
 
 export const TILES: Tile[] = [
   {
@@ -59,6 +59,7 @@ export const TILES: Tile[] = [
     appFocus: 'Copilot Chat',
     learningGoal: 'Öva på att be om prioritering, motivering och publiknytta.',
     sourceInstruction: 'Välj ett kort sidintervall eller ett tydligt avsnitt.',
+    bonusChallenge: 'Be Copilot peka ut vilket påstående i svaret som har svagast stöd och förbättra det.',
     verbalPresentationPrompt: [
       'Vilka tre insikter fick ni?',
       'Hur bad ni Copilot avgöra vad som var viktigast?',
@@ -227,6 +228,7 @@ export const TILES: Tile[] = [
     appFocus: 'Word Agent / Copilot i Word',
     learningGoal: 'Visa att Copilot kan skapa en riktig Office-fil från källmaterial och att resultatet behöver mänsklig redigering.',
     sourceInstruction: 'Använd bara de valda sidorna och klarspråksdokumentet. Ange sidnummer i dokumentet.',
+    bonusChallenge: 'Be Copilot markera den minst begripliga formuleringen. Förbättra den sedan själva.',
     verbalPresentationPrompt: [
       'Visa Word-filen och beskriv vem den är skriven för.',
       'Vilken formulering eller uppgift förbättrade ni manuellt?',
@@ -563,6 +565,7 @@ export const TILES: Tile[] = [
     appFocus: 'Copilot i Excel',
     learningGoal: 'Visa hur Copilot kan hjälpa till att felsöka en befintlig arbetsbok utan att ersätta mänsklig kontroll.',
     sourceInstruction: 'Använd endast den syntetiska övningsfilen. Ändra inget innan ni har granskat Copilots förklaring.',
+    bonusChallenge: 'Be Copilot förklara varför den mest svårupptäckta avvikelsen kan leda till ett felaktigt beslut.',
     verbalPresentationPrompt: [
       'Vilka två celler verkade misstänkta?',
       'Hur förklarade Copilot avvikelsen?',
@@ -587,6 +590,7 @@ export const TILES: Tile[] = [
     appFocus: 'Create -> Infografik',
     learningGoal: 'Visa hur ett befintligt dokument kan omvandlas till en konkret visuell produkt med källkontroll.',
     sourceInstruction: 'Använd årsredovisningen som källa. Ha högst tre budskap och hitta inte på siffror.',
+    bonusChallenge: 'Kontrollera en siffra och ett visuellt påstående mot årsredovisningen.',
     verbalPresentationPrompt: [
       'Vilka tre budskap valde ni?',
       'Vilken uppgift faktakontrollerade ni?',
@@ -611,6 +615,7 @@ export const TILES: Tile[] = [
     appFocus: 'Copilot i Excel',
     learningGoal: 'Träna på att använda en befintlig arbetsbok för en konkret verksamhetsfråga och granska analysens begränsningar.',
     sourceInstruction: 'Använd endast den syntetiska semesterplanen och dess angivna minimibemanning.',
+    bonusChallenge: 'Bryt ner en riskdag per team eller roll och förklara varför totalsiffran inte räcker.',
     verbalPresentationPrompt: [
       'Vilka tre dagar hade lägst bemanning?',
       'Hur visade ni resultatet?',

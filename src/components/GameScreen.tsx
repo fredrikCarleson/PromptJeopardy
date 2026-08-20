@@ -8,6 +8,7 @@ import TileModal from './TileModal';
 import TileRevealAnimation from './TileRevealAnimation';
 import TopBar from './TopBar';
 import SpecialMomentScreen from './SpecialMomentScreen';
+import WorkshopCompleteScreen from './WorkshopCompleteScreen';
 import { SPECIAL_MOMENTS, SpecialMoment, SpecialMomentId } from '../data/specialMoments';
 import {
   playGoalFanfare,
@@ -24,13 +25,14 @@ interface GameProgress {
   tiles: Tile[];
   currentActiveTileId: number | null;
   lastPresenterIndex: number | null;
-  history: Array<{ tileId: number; points: number; presenterIndex: number | null }>;
+  history: Array<{ tileId: number; points: number; presenterIndex: number | null; reviewerIndex?: number | null }>;
 }
 
 interface RoundState {
   phase: RoundPhase;
   activeTileId: number | null;
   presenterIndex: number | null;
+  reviewerIndex: number | null;
   timerRunning: boolean;
   timeRemaining: number;
 }
@@ -41,7 +43,7 @@ interface StoredGameProgress {
   tileStatuses: Record<number, TileStatus>;
   currentActiveTileId: number | null;
   lastPresenterIndex: number | null;
-  history: Array<{ tileId: number; points: number; presenterIndex: number | null }>;
+  history: Array<{ tileId: number; points: number; presenterIndex: number | null; reviewerIndex?: number | null }>;
   roundState?: Omit<RoundState, 'timerRunning'>;
   completedSpecialMomentIds?: SpecialMomentId[];
 }
@@ -64,6 +66,7 @@ const createInitialRoundState = (timerMinutes: number): RoundState => ({
   phase: 'selecting_tile',
   activeTileId: null,
   presenterIndex: null,
+  reviewerIndex: null,
   timerRunning: false,
   timeRemaining: timerMinutes * 60,
 });
@@ -123,6 +126,7 @@ const loadInitialSession = (timerMinutes: number): { progress: GameProgress; rou
             ? {
                 ...restoredRoundState,
                 activeTileId,
+                reviewerIndex: restoredRoundState.reviewerIndex ?? null,
                 timerRunning: false,
               }
             : createInitialRoundState(timerMinutes),
@@ -151,6 +155,7 @@ const loadInitialSession = (timerMinutes: number): { progress: GameProgress; rou
                 phase: 'working',
                 activeTileId,
                 presenterIndex: null,
+                reviewerIndex: null,
                 timerRunning: false,
                 timeRemaining: timerMinutes * 60,
               }
@@ -193,6 +198,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }
   });
   const [lastPointsAdded, setLastPointsAdded] = useState(0);
+  const [completionDismissed, setCompletionDismissed] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem('soundEnabled') !== 'false');
   const persistTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousGoalReachedRef = useRef(goalReached);
@@ -218,6 +224,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           phase: roundState.phase,
           activeTileId: roundState.activeTileId,
           presenterIndex: roundState.presenterIndex,
+          reviewerIndex: roundState.reviewerIndex,
           timeRemaining: roundState.timeRemaining,
         },
       };
@@ -259,16 +266,6 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   }, [roundState.timerRunning]);
 
   useEffect(() => {
-    if (roundState.phase === 'working' && roundState.timeRemaining === 0 && !roundState.timerRunning) {
-      setRoundState((prev) => ({
-        ...prev,
-        phase: 'presenting',
-        timerRunning: false,
-      }));
-    }
-  }, [roundState.phase, roundState.timeRemaining, roundState.timerRunning]);
-
-  useEffect(() => {
     if (soundEnabled && roundState.phase === 'working' && roundState.timeRemaining === 30) {
       playTimerWarning();
     }
@@ -302,6 +299,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           phase: 'working',
           activeTileId: tileId,
           presenterIndex: null,
+          reviewerIndex: null,
           timerRunning: false,
           timeRemaining: timerMinutes * 60,
         });
@@ -345,6 +343,22 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }));
   }, []);
 
+  const addMinute = useCallback(() => {
+    setRoundState((prev) => ({
+      ...prev,
+      timeRemaining: prev.timeRemaining + 60,
+      timerRunning: true,
+    }));
+  }, []);
+
+  const startWorkFromModal = useCallback(() => {
+    setRoundState((prev) => ({
+      ...prev,
+      timerRunning: prev.timeRemaining > 0,
+    }));
+    setSelectedTileForModal(null);
+  }, []);
+
   const showActiveTask = useCallback(() => {
     const activeTileId = roundStateRef.current.activeTileId;
     if (activeTileId !== null) setSelectedTileForModal(activeTileId);
@@ -373,18 +387,43 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   }, [timerMinutes]);
 
   const selectRandomPresenter = useCallback(() => {
-    let selectedIndex = Math.floor(Math.random() * config.numPairs);
-    const lastPresenter = progressRef.current.lastPresenterIndex;
+    const allPairIndexes = Array.from({ length: config.numPairs }, (_, index) => index);
+    const previousPresenters = new Set(
+      progressRef.current.history
+        .map((move) => move.presenterIndex)
+        .filter((index): index is number => index !== null)
+    );
+    const previousActivePairs = new Set(
+      progressRef.current.history.flatMap((move) =>
+        [move.presenterIndex, move.reviewerIndex].filter((index): index is number => index !== null && index !== undefined)
+      )
+    );
+    const freshPresenterPool = allPairIndexes.filter((index) => !previousActivePairs.has(index));
+    const unusedPresenters = allPairIndexes.filter((index) => !previousPresenters.has(index));
+    const presenterPool =
+      config.avoidRepeatingPresenter && freshPresenterPool.length > 0
+        ? freshPresenterPool
+        : config.avoidRepeatingPresenter && unusedPresenters.length > 0
+          ? unusedPresenters
+        : allPairIndexes;
+    const selectedIndex = presenterPool[Math.floor(Math.random() * presenterPool.length)];
 
-    if (config.avoidRepeatingPresenter && config.numPairs > 1 && lastPresenter !== null) {
-      while (selectedIndex === lastPresenter) {
-        selectedIndex = Math.floor(Math.random() * config.numPairs);
-      }
-    }
+    const freshReviewerPool = allPairIndexes.filter(
+      (index) => index !== selectedIndex && !previousActivePairs.has(index)
+    );
+    const reviewerPool =
+      config.avoidRepeatingPresenter && freshReviewerPool.length > 0
+        ? freshReviewerPool
+        : allPairIndexes.filter((index) => index !== selectedIndex);
+    const reviewerIndex =
+      reviewerPool.length > 0
+        ? reviewerPool[Math.floor(Math.random() * reviewerPool.length)]
+        : null;
 
     setRoundState((prev) => ({
       ...prev,
       presenterIndex: selectedIndex,
+      reviewerIndex,
       phase: 'presenting',
     }));
     if (soundEnabled) playPresenterReveal();
@@ -415,6 +454,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     const newScore = currentProgress.currentScore + tile.points;
     const newRoundCount = currentProgress.roundCount + 1;
     const presenterIndex = currentRoundState.presenterIndex;
+    const reviewerIndex = currentRoundState.reviewerIndex;
     setLastPointsAdded(tile.points);
     if (soundEnabled) playScoreChime();
 
@@ -427,11 +467,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       ),
       currentActiveTileId: null,
       lastPresenterIndex: presenterIndex,
-      history: [...prev.history, { tileId: activeTileId, points: tile.points, presenterIndex }],
+      history: [...prev.history, { tileId: activeTileId, points: tile.points, presenterIndex, reviewerIndex }],
     }));
 
     const completedGuidedRoundCount = config.plannedTileIds.filter((tileId) =>
-      [...currentProgress.history, { tileId: activeTileId, points: tile.points, presenterIndex }].some(
+      [...currentProgress.history, { tileId: activeTileId, points: tile.points, presenterIndex, reviewerIndex }].some(
         (move) => move.tileId === tileId
       )
     ).length;
@@ -447,6 +487,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     setRoundState({
       ...createInitialRoundState(timerMinutes),
       presenterIndex,
+      reviewerIndex,
     });
     if (nextSpecialMoment) {
       setActiveSpecialMoment(nextSpecialMoment);
@@ -504,6 +545,17 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   const currentPlannedRound = config.plannedTileIds.filter((tileId) =>
     progress.history.some((move) => move.tileId === tileId)
   ).length;
+  const guidedWorkshopComplete =
+    config.mode === 'guided_workshop' &&
+    config.plannedTileIds.length > 0 &&
+    currentPlannedRound >= config.plannedTileIds.length;
+  const displayedRoundCount =
+    config.mode === 'guided_workshop'
+      ? Math.min(
+          currentPlannedRound + (roundState.activeTileId !== null ? 1 : 0),
+          config.plannedTileIds.length
+        )
+      : progress.roundCount;
 
   return (
     <div className="min-h-screen bg-slate-950 p-2 text-white lg:p-3">
@@ -519,6 +571,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       {showPresentationScreen && roundState.presenterIndex !== null && (
         <PresentationScreen
           pairName={config.pairNames[roundState.presenterIndex]}
+          reviewerName={
+            roundState.reviewerIndex !== null
+              ? config.pairNames[roundState.reviewerIndex]
+              : null
+          }
           activeTile={activeTile}
           durationSeconds={presentationSeconds}
           soundEnabled={soundEnabled}
@@ -532,6 +589,14 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           showAnswers={showSpecialMomentAnswers}
           onRevealAnswers={() => setShowSpecialMomentAnswers(true)}
           onFinish={finishSpecialMoment}
+        />
+      )}
+
+      {guidedWorkshopComplete && !completionDismissed && !activeSpecialMoment && !showPresentationScreen && (
+        <WorkshopCompleteScreen
+          score={progress.currentScore}
+          onContinue={() => setCompletionDismissed(true)}
+          onReset={confirmReset}
         />
       )}
 
@@ -549,9 +614,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           <TopBar
             currentScore={progress.currentScore}
             targetScore={config.targetScore}
-            roundCount={progress.roundCount}
-            completedCount={completedCount}
-            totalTiles={progress.tiles.length}
+            roundCount={displayedRoundCount}
+            roundTotal={config.mode === 'guided_workshop' ? config.plannedTileIds.length : undefined}
+            completedCount={config.mode === 'guided_workshop' ? currentPlannedRound : completedCount}
+            totalTiles={config.mode === 'guided_workshop' ? config.plannedTileIds.length : progress.tiles.length}
+            completedLabel={config.mode === 'guided_workshop' ? 'Klara i banan' : 'Klara rutor'}
             lastPresenter={
               progress.lastPresenterIndex !== null
                 ? config.pairNames[progress.lastPresenterIndex]
@@ -584,6 +651,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 onSelectRandomTile={selectRandomStartTile}
                 onSelectRecommendedTile={selectRecommendedTile}
                 onStartTimer={startTimer}
+                onAddMinute={addMinute}
                 onShowTask={showActiveTask}
                 onGoToPresenting={goToPresenting}
                 onSelectRandomPresenter={selectRandomPresenter}
@@ -596,6 +664,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 presenterName={
                   roundState.presenterIndex !== null
                     ? config.pairNames[roundState.presenterIndex]
+                    : null
+                }
+                reviewerName={
+                  roundState.reviewerIndex !== null
+                    ? config.pairNames[roundState.reviewerIndex]
                     : null
                 }
                 activeTile={activeTile}
@@ -613,6 +686,9 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
         <TileModal
           tile={progress.tiles.find((tile) => tile.id === selectedTileForModal)!}
           onClose={() => setSelectedTileForModal(null)}
+          timeRemaining={roundState.timeRemaining}
+          timerRunning={roundState.timerRunning}
+          onStartWork={startWorkFromModal}
         />
       )}
     </div>

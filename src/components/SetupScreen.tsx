@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronLeft, Play } from 'lucide-react';
+import { CheckSquare, ChevronLeft, Download, Play } from 'lucide-react';
 import { GUIDED_WORKSHOP_TILE_IDS, TILES } from '../data/tiles';
 import { GameConfig } from '../types';
 
@@ -17,7 +17,7 @@ const openBoardTarget = 2100;
 
 export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
   const [mode, setMode] = useState<GameConfig['mode']>('guided_workshop');
-  const [numPairs, setNumPairs] = useState(25);
+  const [numPairs, setNumPairs] = useState(15);
   const [targetScore, setTargetScore] = useState(guidedWorkshopTarget);
   const [timerMinutes, setTimerMinutes] = useState(5);
   const [presentationSeconds, setPresentationSeconds] = useState(75);
@@ -82,7 +82,7 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-black text-white lg:text-5xl">Spelinställningar</h1>
             <p className="mt-3 text-slate-300">
-              För en workshop med årsredovisningen, klarspråksdokumentet och Microsoft 365 Copilot Chat.
+              För en workshop med årsredovisningen och Copilot i Chat, Word, Excel och Create.
             </p>
           </div>
 
@@ -202,7 +202,7 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
                 className="h-4 w-4 rounded accent-blue-500"
               />
               <label htmlFor="avoidRepeat" className="flex-1 cursor-pointer text-sm text-slate-200">
-                Undvik samma presenterande par två gånger i rad.
+                Prioritera par som ännu inte har presenterat eller granskat.
               </label>
             </div>
 
@@ -211,6 +211,38 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
                 ? 'Workshopläget använder fem planerade rutor och tre korta muntliga specialmoment mellan rundorna: Vad saknas?, Förbättra prompten och Farlig detalj.'
                 : 'Fri tavla passar när du vill ha mer spelshow-känsla. Med 60 minuter hinner gruppen oftast 5-6 frågor, så 2100 poäng kräver flera svårare rutor.'}
             </div>
+
+            {mode === 'guided_workshop' && (
+              <section className="rounded-md border border-emerald-500/30 bg-emerald-500/10 p-4">
+                <h2 className="flex items-center gap-2 text-base font-bold text-emerald-100">
+                  <CheckSquare size={20} />
+                  Kontrollera före start
+                </h2>
+                <p className="mt-1 text-xs text-emerald-100/80">Checklistan är ett stöd och blockerar inte starten.</p>
+                <div className="mt-3 grid gap-2 text-sm text-slate-100 sm:grid-cols-2">
+                  {[
+                    'Årsredovisningen är tillgänglig.',
+                    'Klarspråksdokumentet är tillgängligt.',
+                    'Excelövningen är sparad i OneDrive eller SharePoint och öppnad i Excel.',
+                    'Copilot i Word, Excel och Create är testat.',
+                    'Projektorn visar appen i helskärm och texten går att läsa längst bak.',
+                  ].map((item) => (
+                    <label key={item} className="flex cursor-pointer items-start gap-2 rounded bg-slate-950/40 p-2.5">
+                      <input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0 rounded accent-emerald-500" />
+                      <span>{item}</span>
+                    </label>
+                  ))}
+                </div>
+                <a
+                  href={`${import.meta.env.BASE_URL}ovningsfiler/Semesterplan-demo.xlsx`}
+                  download
+                  className="mt-3 flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2.5 font-semibold text-white transition-colors hover:bg-emerald-600"
+                >
+                  <Download size={18} />
+                  Ladda ner Excelövningen
+                </a>
+              </section>
+            )}
 
             <button
               type="button"

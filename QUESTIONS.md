@@ -26,6 +26,7 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
 - Appfokus: Copilot Chat
 - Uppgift: Välj 2-3 sidor ur ett kapitel. Be Copilot Chat ta fram de tre viktigaste insikterna och förklara varför de är viktiga för medborgare.
 - Avgränsa källan: Välj ett kort sidintervall eller ett tydligt avsnitt.
+- Klart tidigt: Be Copilot peka ut vilket påstående i svaret som har svagast stöd och förbättra det.
 - Lärandemål: Öva på att be om prioritering, motivering och publiknytta.
 - Reflektionsfrågor:
   - Vilka tre insikter fick ni?
@@ -119,6 +120,7 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
 - Appfokus: Word Agent / Copilot i Word
 - Uppgift: Årsredovisningen och klarspråksdokumentet är redan tillgängliga. Välj 2-3 sidor om ett ämne som är relevant för medborgare. Använd Word Agent eller Copilot i Word för att skapa ett färdigt informationsblad på högst en sida. Öppna dokumentet, faktakontrollera det och förbättra minst en formulering.
 - Avgränsa källan: Använd bara de valda sidorna och klarspråksdokumentet. Ange sidnummer i dokumentet.
+- Klart tidigt: Be Copilot markera den minst begripliga formuleringen. Förbättra den sedan själva.
 - Lärandemål: Visa att Copilot kan skapa en riktig Office-fil från källmaterial och att resultatet behöver mänsklig redigering.
 - Reflektionsfrågor:
   - Visa Word-filen och beskriv vem den är skriven för.
@@ -307,6 +309,7 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
 - Appfokus: Copilot i Excel
 - Uppgift: Öppna den gemensamma filen Semesterplan-demo.xlsx i Excel. Be Copilot i Excel leta efter formler som avviker från mönstret, felvärden och hårdkodade tal där det borde finnas en formel. Undersök två misstänkta celler och kontrollera förslagen manuellt innan ni ändrar något.
 - Avgränsa källan: Använd endast den syntetiska övningsfilen. Ändra inget innan ni har granskat Copilots förklaring.
+- Klart tidigt: Be Copilot förklara varför den mest svårupptäckta avvikelsen kan leda till ett felaktigt beslut.
 - Lärandemål: Visa hur Copilot kan hjälpa till att felsöka en befintlig arbetsbok utan att ersätta mänsklig kontroll.
 - Reflektionsfrågor:
   - Vilka två celler verkade misstänkta?
@@ -320,6 +323,7 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
 - Appfokus: Create -> Infografik
 - Uppgift: Öppna Create i Microsoft 365 Copilot och välj "Design an infographic". Lägg till årsredovisningen som källa och skapa en infografik för medborgare med högst tre huvudbudskap. Kontrollera alla siffror och formuleringar mot rapporten innan ni laddar ned bilden.
 - Avgränsa källan: Använd årsredovisningen som källa. Ha högst tre budskap och hitta inte på siffror.
+- Klart tidigt: Kontrollera en siffra och ett visuellt påstående mot årsredovisningen.
 - Lärandemål: Visa hur ett befintligt dokument kan omvandlas till en konkret visuell produkt med källkontroll.
 - Reflektionsfrågor:
   - Vilka tre budskap valde ni?
@@ -333,6 +337,7 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
 - Appfokus: Copilot i Excel
 - Uppgift: Öppna Semesterplan-demo.xlsx i Excel. Be Copilot i Excel hitta de tre arbetsdagar som har lägst bemanning, markera dagar under minimibemanningen och skapa en enkel visualisering. Be sedan Copilot beskriva vad analysen inte tar hänsyn till.
 - Avgränsa källan: Använd endast den syntetiska semesterplanen och dess angivna minimibemanning.
+- Klart tidigt: Bryt ner en riskdag per team eller roll och förklara varför totalsiffran inte räcker.
 - Lärandemål: Träna på att använda en befintlig arbetsbok för en konkret verksamhetsfråga och granska analysens begränsningar.
 - Reflektionsfrågor:
   - Vilka tre dagar hade lägst bemanning?

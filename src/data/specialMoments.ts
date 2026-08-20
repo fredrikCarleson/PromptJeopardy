@@ -16,7 +16,7 @@ export const SPECIAL_MOMENTS: SpecialMoment[] = [
     afterGuidedRound: 2,
     title: 'Vad saknas?',
     prompt: 'Vad behöver läggas till för att prompten ska bli riktigt användbar?',
-    facilitatorCue: 'Låt rummet ropa ut svar. Fånga 2-3 förslag innan du visar facit.',
+    facilitatorCue: 'Ropa ut svar tillsammans. Vi samlar 2–3 förslag innan facit visas.',
     screenContent: [
       'Sammanfatta avsnittet nedan i tre punkter för en medborgare.',
       'Använd bara information från texten.',
@@ -32,7 +32,7 @@ export const SPECIAL_MOMENTS: SpecialMoment[] = [
     afterGuidedRound: 3,
     title: 'Förbättra prompten',
     prompt: 'Hur skulle ni förbättra den här prompten innan ni skickar den?',
-    facilitatorCue: 'Be om muntliga förbättringar från rummet. Bygg sedan upp den bättre prompten tillsammans.',
+    facilitatorCue: 'Föreslå muntliga förbättringar. Vi bygger sedan upp en bättre prompt tillsammans.',
     screenContent: [
       'Skriv om texten så att den blir tydligare.',
     ],
@@ -48,7 +48,7 @@ export const SPECIAL_MOMENTS: SpecialMoment[] = [
     afterGuidedRound: 4,
     title: 'Farlig detalj',
     prompt: 'Vilken detalj här borde få er att stanna upp och kontrollera svaret manuellt?',
-    facilitatorCue: 'Låt någon i rummet peka ut varningssignalen innan du visar svaret.',
+    facilitatorCue: 'Peka ut varningssignalen tillsammans innan svaret visas.',
     screenContent: [
       'Copilot svarar:',
       '"Antalet digitala ärenden ökade med 18 procent under året, vilket visar att myndigheten redan har nått sitt mål."',

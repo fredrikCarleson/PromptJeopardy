@@ -1,4 +1,4 @@
-import { CheckCircle, Maximize2, Pause, Play, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
+import { CheckCircle, Maximize2, Pause, Play, Plus, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
 import { RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -11,6 +11,7 @@ interface RoundFlowProps {
   onSelectRandomTile: () => void;
   onSelectRecommendedTile: () => void;
   onStartTimer: () => void;
+  onAddMinute: () => void;
   onShowTask: () => void;
   onGoToPresenting: () => void;
   onSelectRandomPresenter: () => void;
@@ -21,6 +22,7 @@ interface RoundFlowProps {
   onReset: () => void;
   canMarkComplete: boolean;
   presenterName: string | null;
+  reviewerName: string | null;
   activeTile: Tile | undefined;
   isFirstRound: boolean;
   nextRecommendedTile: Tile | undefined;
@@ -63,6 +65,7 @@ export default function RoundFlow({
   onSelectRandomTile,
   onSelectRecommendedTile,
   onStartTimer,
+  onAddMinute,
   onShowTask,
   onGoToPresenting,
   onSelectRandomPresenter,
@@ -73,6 +76,7 @@ export default function RoundFlow({
   onReset,
   canMarkComplete,
   presenterName,
+  reviewerName,
   activeTile,
   isFirstRound,
   nextRecommendedTile,
@@ -109,7 +113,7 @@ export default function RoundFlow({
           <p className="text-sm text-slate-300">
             {mode === 'guided_workshop'
               ? nextRecommendedTile
-                ? 'Workshopläget bygger en tydlig femrundors båge: förstå, klarspråk, arbetskontext, skapande och datakontroll.'
+                ? 'Workshopläget går från insikter till Word och infografik, och avslutas med två sammanhängande Excelrundor.'
                 : 'Fortsätt fritt om ni har tid kvar eller använd slutet till gemensam summering.'
               : isFirstRound
               ? 'Starta workshopen med slumpen så att ingen styr första ämnet.'
@@ -186,6 +190,12 @@ export default function RoundFlow({
                 {activeTile.appFocus}
               </span>
             </div>
+            {activeTile.bonusChallenge && (
+              <div className="mt-3 rounded-lg border border-yellow-300/40 bg-yellow-300/10 p-3 text-base leading-snug text-yellow-50">
+                <div className="mb-1 text-sm font-black uppercase text-yellow-200">Klart tidigt?</div>
+                {activeTile.bonusChallenge}
+              </div>
+            )}
           </div>
 
           <div className="rounded-md border border-slate-700 bg-slate-950/60 p-3">
@@ -209,16 +219,37 @@ export default function RoundFlow({
             {formatTime(timeRemaining)}
           </div>
 
-          <button
-            type="button"
-            onClick={onStartTimer}
-            className={`flex w-full items-center justify-center gap-2 rounded-md py-3 text-base font-semibold text-white transition-colors ${
-              timerRunning ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500'
-            }`}
-          >
-            {timerRunning ? <Pause size={18} /> : <Play size={18} />}
-            {timerRunning ? 'Pausa timer' : 'Starta timer'}
-          </button>
+          {timeRemaining === 0 && (
+            <div className="rounded-md border border-red-400/40 bg-red-500/10 p-3 text-center text-lg font-bold text-red-100">
+              Tiden är slut. Gå vidare när rummet är redo eller ge en minut till.
+            </div>
+          )}
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={onStartTimer}
+              disabled={timeRemaining === 0}
+              className={`flex w-full items-center justify-center gap-2 rounded-md py-3 text-base font-semibold text-white transition-colors ${
+                timeRemaining === 0
+                  ? 'cursor-not-allowed bg-slate-700 text-slate-400'
+                  : timerRunning
+                    ? 'bg-amber-600 hover:bg-amber-500'
+                    : 'bg-emerald-600 hover:bg-emerald-500'
+              }`}
+            >
+              {timerRunning ? <Pause size={18} /> : <Play size={18} />}
+              {timerRunning ? 'Pausa timer' : 'Starta timer'}
+            </button>
+            <button
+              type="button"
+              onClick={onAddMinute}
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-700 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-600"
+            >
+              <Plus size={18} />
+              Ge 1 minut till
+            </button>
+          </div>
 
           <button
             type="button"
@@ -226,7 +257,7 @@ export default function RoundFlow({
             className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-700 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-600"
           >
             <Presentation size={18} />
-            Gå till muntlig redovisning
+            {timeRemaining === 0 ? 'Tiden är slut – gå till redovisning' : 'Gå till muntlig redovisning'}
           </button>
 
           <button
@@ -244,7 +275,7 @@ export default function RoundFlow({
         <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
           <div className="font-semibold text-amber-200">Muntlig redovisning</div>
           <p className="text-sm text-slate-300">
-            Slumpa vilket par som ska visa och beskriva sitt resultat från den egna datorn.
+            Slumpa ett presenterande par och ett granskarpar. Par som ännu inte haft en aktiv roll prioriteras.
           </p>
 
           <button
@@ -253,13 +284,21 @@ export default function RoundFlow({
             className="flex w-full items-center justify-center gap-2 rounded-md bg-amber-600 py-2.5 font-semibold text-white transition-colors hover:bg-amber-500"
           >
             <Shuffle size={18} />
-            Slumpa presenterande par
+            Slumpa två par
           </button>
 
           {presenterName && (
-            <div className="rounded-md bg-slate-800 p-4 text-center">
-              <div className="text-xs uppercase text-slate-400">Presenterande par</div>
-              <div className="mt-1 text-3xl font-black text-white">{presenterName}</div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="rounded-md bg-slate-800 p-4 text-center">
+                <div className="text-xs uppercase text-slate-400">Presenterande par</div>
+                <div className="mt-1 text-2xl font-black text-white">{presenterName}</div>
+              </div>
+              {reviewerName && (
+                <div className="rounded-md border border-yellow-300/30 bg-yellow-300/10 p-4 text-center">
+                  <div className="text-xs uppercase text-yellow-100">Granskarpar</div>
+                  <div className="mt-1 text-2xl font-black text-white">{reviewerName}</div>
+                </div>
+              )}
             </div>
           )}
 
@@ -280,7 +319,9 @@ export default function RoundFlow({
         <div className="space-y-3 rounded-lg border border-violet-500/30 bg-violet-500/10 p-4">
           <div className="font-semibold text-violet-200">Lägg till poäng</div>
           <p className="text-sm text-slate-300">
-            Markera uppgiften som klar innan nästa ruta väljs. Därefter får det presenterande paret välja nästa ruta, eller så slumpas den.
+            {mode === 'guided_workshop'
+              ? 'Markera uppgiften som klar. Därefter visar panelen nästa rekommenderade runda.'
+              : 'Markera uppgiften som klar. Därefter får det presenterande paret välja nästa ruta, eller så slumpas den.'}
           </p>
           <div className="rounded-md bg-slate-800 p-3">
             <div className="text-sm font-semibold text-white">{activeTile.title}</div>
