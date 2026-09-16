@@ -2,7 +2,7 @@
 
 Redigera den här filen när du vill ändra frågor, kategorier, poäng eller reflektionsfrågor. Be sedan Codex läsa `QUESTIONS.md` och uppdatera `src/data/tiles.ts`.
 
-Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-funktioner i Word, Excel och Create. Verktyget står uttryckligen i varje fråga. Deltagarna ska arbeta i den angivna appen och visa den faktiska filen, analysen eller bilden när uppgiften kräver det.
+Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-funktioner i Word, Excel och Create. Verktyget står uttryckligen i varje fråga. Deltagarna ska arbeta i den angivna appen och visa den faktiska filen, analysen eller bilden när uppgiften kräver det. Fem IT-anpassade rutor kräver ingen källfil; originalen finns i `src/data/originals/skatteverket-five-tiles.md`.
 
 ## Förstå rapporten
 
@@ -46,31 +46,43 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
   - Hur säkerställde ni att svaren höll sig till källan?
   - Vilken fråga behövde mest mänsklig kontroll?
 
-### 400 poäng: Hitta relaterat arbetsmaterial
+### 400 poäng: Kreativa förslag på retrospektivupplägg
 
-- Kort etikett: Sök kontext
+- Kort etikett: Kreativa förslag
 - Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> OneDrive/SharePoint/Search
-- Uppgift: Be Copilot Chat hitta dokument, presentationer, mejl eller Teams-material som ni har tillgång till och som kan ge kontext till ett område i årsredovisningen, till exempel service, digitalisering, kontroll, folkbokföring eller tillgänglighet. Välj ett hittat material och be Copilot Chat förklara hur det relaterar till årsredovisningen.
-- Avgränsa källan: Använd en tydlig sökfråga och högst ett eller två dokument som Copilot hittar i er M365-miljö.
-- Lärandemål: Förstå att M365 Copilot Chat kan använda arbetskontext som filer, mejl, möten och delade dokument när användaren har behörighet.
+- Appfokus: Copilot Chat
+- Uppgift: Be Copilot Chat ta fram tre förslag på hur en timmes retrospektiv kan läggas upp. Ge Copilot en tydlig roll, kontext och önskat format.
+- Avgränsa källan: Ingen källfil krävs. Använd bara den kontext ni ger Copilot i chatten.
+- Klart tidigt: Ge Copilot Chat en annan kontext för retrospektivet och se hur det påverkar svaret.
+- Lärandemål: Öva på att be om kreativa förslag på hur en arbetsuppgift kan utföras.
+- Gör så här:
+  - Be Copilot Chat agera som en rutinerad scrum master.
+  - Be om tre förslag på hur en timmes retrospektiv kan läggas upp.
+  - Ange kontext och önskat format för svaret.
+- Förväntat resultat: Tre exempel på hur ett retrospektiv kan läggas upp.
 - Reflektionsfrågor:
-  - Vad bad ni Copilot leta efter?
-  - Vilket dokument eller material hittade Copilot?
-  - Hur märktes det att Copilot använde arbetskontext och inte bara allmän kunskap?
+  - Hur kreativa tycker ni svaren från Copilot var?
+  - Hur väl tycker ni att Copilot anpassade sitt svar till kontexten?
+  - Vad ändrade ni i prompten för att styra formatet?
 
-### 500 poäng: Ledningsbrief från flera källor
+### 500 poäng: Bryt ner en user story
 
-- Kort etikett: Flerkällsbrief
+- Kort etikett: Nedbrytning
 - Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> OneDrive/SharePoint
-- Uppgift: Välj ett utdrag ur årsredovisningen och komplettera med ett dokument från OneDrive eller SharePoint som ni har tillgång till. Be Copilot Chat skapa en muntlig ledningsbrief på en minut med läge, viktigaste resultat, risk och en rekommenderad följdfråga.
-- Avgränsa källan: Använd ett kort utdrag ur årsredovisningen och ett relevant internt eller delat dokument.
-- Lärandemål: Träna på att kombinera årsredovisningen med arbetsmaterial och samtidigt be om källmedveten sammanfattning.
+- Appfokus: Copilot Chat
+- Uppgift: Beskriv en användarberättelse (user story) i Copilot Chat och be Copilot bryta ner den i utvecklingsaktiviteter. Iterera prompten tills resultatet är relevant och heltäckande.
+- Avgränsa källan: Ingen källfil krävs. Använd bara den user story och det område ni ger Copilot.
+- Klart tidigt: Ange en ny användarberättelse och jämför nedbrytningen.
+- Lärandemål: Öva på att bryta ner en större arbetsuppgift och iterera prompten tills resultatet är relevant och heltäckande.
+- Gör så här:
+  - Be Copilot agera som en erfaren utvecklare inom ett område ni kan.
+  - Ange en user story: Som en… vill jag att… så att…
+  - Be om en nedbrytning och iterera tills den är heltäckande.
+- Förväntat resultat: Utvecklingsaktiviteter som täcker utveckling, felhantering, verifiering och dokumentation.
 - Reflektionsfrågor:
-  - Vilka två källor använde ni?
-  - Vad blev bättre när Copilot fick arbetskontext?
-  - Vilken del behövde ni faktakolla manuellt?
+  - Hur pass heltäckande tycker ni Copilots svar var?
+  - Var det några utvecklingsaktiviteter i Copilots svar som var överraskande?
+  - Vad ändrade ni när ni itererade prompten?
 
 ## Klarspråk
 
@@ -113,19 +125,24 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
   - Vilka brister hittade Copilot?
   - Vilket förbättringsförslag var mest användbart?
 
-### 400 poäng: Färdigt informationsblad i Word
+### 400 poäng: Copilot som sparringpartner
 
-- Kort etikett: Word-fil
-- Verktyg: Copilot i Word
-- Appfokus: Word Agent / Copilot i Word
-- Uppgift: Årsredovisningen och klarspråksdokumentet är redan tillgängliga. Välj 2-3 sidor om ett ämne som är relevant för medborgare. Använd Word Agent eller Copilot i Word för att skapa ett färdigt informationsblad på högst en sida. Öppna dokumentet, faktakontrollera det och förbättra minst en formulering.
-- Avgränsa källan: Använd bara de valda sidorna och klarspråksdokumentet. Ange sidnummer i dokumentet.
-- Klart tidigt: Be Copilot markera den minst begripliga formuleringen. Förbättra den sedan själva.
-- Lärandemål: Visa att Copilot kan skapa en riktig Office-fil från källmaterial och att resultatet behöver mänsklig redigering.
+- Kort etikett: Sparringpartner
+- Verktyg: Microsoft 365 Copilot Chat
+- Appfokus: Copilot Chat
+- Uppgift: Be Copilot Chat anta en persona med specifika åsikter, till exempel en medarbetare som inte vill dela kunskap. Simulera en konversation där ni försöker få personen att ändra tankesätt och agerande.
+- Avgränsa källan: Ingen källfil krävs. Använd bara den roll, ståndpunkt och kontext ni ger Copilot.
+- Klart tidigt: Prova att ge Copilot en annan roll och persona.
+- Lärandemål: Öva på att använda Copilot som sparringpartner för att vässa argument och simulera en motpart.
+- Gör så här:
+  - Be Copilot anta en tydlig roll och persona.
+  - Ange personens ståndpunkt, till exempel att den inte vill samarbeta.
+  - Simulera en konversation och bemöt Copilots motargument.
+- Förväntat resultat: En simulerad konversation där ni argumenterar mot Copilots persona.
 - Reflektionsfrågor:
-  - Visa Word-filen och beskriv vem den är skriven för.
-  - Vilken formulering eller uppgift förbättrade ni manuellt?
-  - Hur kontrollerade ni att innehållet stämde med källan?
+  - Hur väl tycker ni att Copilot simulerade konversationen?
+  - Tycker ni att Copilot kan fungera bra som en sparringpartner?
+  - Vad ändrade ni i prompten för att få en mer trovärdig motpart?
 
 ### 500 poäng: Bygg en återanvändbar klarspråksprompt
 
@@ -168,31 +185,43 @@ Viktigt: frågorna använder både **Microsoft 365 Copilot Chat** och Copilot-fu
   - Vilket belägg var starkast?
   - Vad hittade ni som försvagade slutsatsen?
 
-### 300 poäng: Jämför filer från OneDrive eller SharePoint
+### 300 poäng: Skapa förslag på testfall
 
-- Kort etikett: Filjämförelse
+- Kort etikett: Testfall
 - Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> OneDrive/SharePoint
-- Uppgift: Be Copilot Chat referera upp till fem filer i OneDrive eller SharePoint som ni har tillgång till, till exempel två versioner av ett dokument, en rapport och en presentation, eller flera underlag inom samma område. Be Copilot Chat jämföra dem och hitta viktigaste likheter, skillnader och möjliga konflikter.
-- Avgränsa källan: Använd högst fem filer och välj dokument som ni har rätt att använda i övningen.
-- Lärandemål: Visa att Copilot Chat kan använda filer från OneDrive/SharePoint som arbetskontext utan att deltagarna öppnar och läser allt manuellt.
+- Appfokus: Copilot Chat
+- Uppgift: Be Copilot Chat agera som en erfaren testare och skapa funktionella testfall för en ny systemfunktion som ni beskriver.
+- Avgränsa källan: Ingen källfil krävs. Använd bara den applikation, funktion och de krav ni beskriver.
+- Klart tidigt: Iterera vidare och be Copilot komplettera det som saknas.
+- Lärandemål: Öva på att be Copilot agera som en testare som kan generera testfall.
+- Gör så här:
+  - Be Copilot agera som en erfaren testare inom ett område ni kan.
+  - Beskriv en applikation och en ny funktion med några användarfall eller krav.
+  - Be om funktionella testfall, med begränsningar och önskat format.
+- Förväntat resultat: Relevanta funktionella testfall för den beskrivna funktionen.
 - Reflektionsfrågor:
-  - Vilka filer jämförde ni?
-  - Vilka skillnader eller konflikter hittade Copilot?
-  - Hur kontrollerade ni att jämförelsen var rimlig?
+  - Hur väl tycker ni att Copilot lyckades skapa relevanta testfall?
+  - Finns det något som ni anser att Copilot har missat?
+  - Vad ändrade ni i prompten för att förbättra testfallen?
 
-### 400 poäng: Kalla fakta-frågor med arbetskontext
+### 400 poäng: Generera kod
 
-- Kort etikett: Granskning+
+- Kort etikett: Kod
 - Verktyg: Microsoft 365 Copilot Chat
-- Appfokus: Copilot Chat -> arbetskontext
-- Uppgift: Välj ett avsnitt i årsredovisningen och, om möjligt, ett relaterat internt dokument eller mejl som Copilot Chat hittar. Be Copilot Chat formulera tre granskande frågor som en journalist skulle kunna ställa, med tydlig koppling till källorna.
-- Avgränsa källan: Använd årsredovisningen plus högst ett extra arbetsmaterial.
-- Lärandemål: Öva på rollprompting, arbetskontext och källbunden kritisk analys.
+- Appfokus: Copilot Chat
+- Uppgift: Be Copilot Chat agera som en erfaren utvecklare i ett programmeringsspråk ni kan. Beskriv funktionen i detalj och be Copilot generera kod.
+- Avgränsa källan: Ingen källfil krävs. Använd bara det språk och den funktionsbeskrivning ni ger Copilot.
+- Klart tidigt: Be Copilot förfina svaret genom att iterera.
+- Lärandemål: Öva på att be Copilot agera som en utvecklare och styra kodgenerering med tydlig uppgift.
+- Gör så här:
+  - Be Copilot agera som en erfaren utvecklare i ett programmeringsspråk ni kan.
+  - Beskriv uppgiften: generera kod för en specifik funktion.
+  - Beskriv funktionen i detalj och be om ett kodutkast.
+- Förväntat resultat: Ett utkast på kod för den beskrivna funktionen.
 - Reflektionsfrågor:
-  - Vilken extra kontext använde ni?
-  - Vilken fråga blev skarpast men fortfarande rättvis?
-  - Hur bad ni Copilot undvika lösa antaganden?
+  - Hur väl tycker ni att Copilot lyckades skapa kod?
+  - Vilken kvalitet har koden efter några iterationer?
+  - Vad behövde ni ändra i prompten för att koden skulle bli användbar?
 
 ### 500 poäng: Beslutsunderlag med osäkerheter
 

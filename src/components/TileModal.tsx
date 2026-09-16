@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, ClipboardList, FileText, Pause, Play, Sparkles, Target, X } from 'lucide-react';
+import { CheckCircle2, ClipboardList, FileText, Pause, Play, Replace, Sparkles, Target, X } from 'lucide-react';
 import { Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { TOPIC_STYLES } from '../utils/categoryStyles';
@@ -11,9 +11,19 @@ interface TileModalProps {
   timeRemaining: number;
   timerRunning: boolean;
   onToggleTimer: () => void;
+  canChooseAnotherQuestion?: boolean;
+  onChooseAnotherQuestion?: () => void;
 }
 
-export default function TileModal({ tile, onClose, timeRemaining, timerRunning, onToggleTimer }: TileModalProps) {
+export default function TileModal({
+  tile,
+  onClose,
+  timeRemaining,
+  timerRunning,
+  onToggleTimer,
+  canChooseAnotherQuestion = false,
+  onChooseAnotherQuestion,
+}: TileModalProps) {
   const [activeTab, setActiveTab] = useState<'task' | 'learning'>('task');
 
   useEffect(() => {
@@ -190,6 +200,21 @@ export default function TileModal({ tile, onClose, timeRemaining, timerRunning, 
             <div className="font-mono text-3xl font-black text-white">{formatTime(timeRemaining)}</div>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            {onChooseAnotherQuestion && (
+              <button
+                type="button"
+                onClick={onChooseAnotherQuestion}
+                disabled={!canChooseAnotherQuestion}
+                className={`flex items-center justify-center gap-2 rounded-md px-5 py-3 font-bold transition-colors ${
+                  canChooseAnotherQuestion
+                    ? 'border border-orange-400/50 bg-orange-500/15 text-orange-50 hover:bg-orange-500/25'
+                    : 'cursor-not-allowed bg-slate-800 text-slate-500'
+                }`}
+              >
+                <Replace size={20} />
+                Välj annan fråga
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}

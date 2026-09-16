@@ -25,14 +25,16 @@ npm run dev
 - Send `public/ovningsfiler/Semesterplan-demo.xlsx` to participants before the workshop. Ask them to save a copy in OneDrive or SharePoint and open it in Excel.
 - Run the five recommended rounds in order:
   1. `Tre viktigaste insikterna`
-  2. `Färdigt informationsblad i Word`
+  2. `Copilot som sparringpartner`
   3. `Infografik från årsredovisningen`
   4. `Formeldetektiven`
   5. `När är bemanningen som lägst?`
+- The five recommended rounds total 1800 points.
 - Use the built-in oral special moments between rounds:
-  - after round 2: `Vad saknas?`
+  - after round 2: `Vad saknas i prompten?`
   - after round 3: `Förbättra prompten`
   - after round 4: `Farlig detalj`
+- If a revealed question does not work in the room, use `Välj annan fråga`. That round gives no points, the tile becomes available again, and the facilitator can click another tile or randomize. In workshop mode the next recommended round is offered instead of the skipped one.
 - Keep the teaching thread consistent: role, source, task, format, control.
 - Each round uses two different roles: one pair presents and another pair gives one strength or control question. Pairs without a previous role are prioritized.
 
@@ -54,6 +56,7 @@ python scripts/create_semesterplan.py
 - Edit authored tasks in `QUESTIONS.md`.
 - Keep `src/data/tiles.ts` aligned with that file before running the workshop.
 - `src/data/tiles.ts` is the runtime data source used by the app.
+- Five older Skatteverket-rutor are archived in `src/data/originals/skatteverket-five-tiles.md` if they need to be restored.
 
 ## Verification
 

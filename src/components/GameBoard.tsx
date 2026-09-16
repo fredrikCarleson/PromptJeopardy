@@ -10,6 +10,7 @@ interface GameBoardProps {
   roundPhase: RoundPhase;
   manualSelectionEnabled: boolean;
   mode: 'guided_workshop' | 'open_board';
+  replacementSelectionEnabled?: boolean;
 }
 
 const POINT_ROWS: PointValue[] = [100, 200, 300, 400, 500];
@@ -21,6 +22,7 @@ export default function GameBoard({
   roundPhase,
   manualSelectionEnabled,
   mode,
+  replacementSelectionEnabled = false,
 }: GameBoardProps) {
   const canSelect = roundPhase === 'selecting_tile' && manualSelectionEnabled;
 
@@ -89,7 +91,7 @@ export default function GameBoard({
         {manualSelectionEnabled ? (
           <div className="flex items-center gap-2 rounded-md border border-violet-400/60 bg-violet-500/15 px-3 py-1.5 text-base font-semibold text-violet-50">
             <MousePointerClick size={20} />
-            Paret kan välja – klicka på en ledig ruta
+            {replacementSelectionEnabled ? 'Välj en annan ledig ruta' : 'Paret kan välja – klicka på en ledig ruta'}
           </div>
         ) : (
           <div className="rounded-md border border-yellow-300/50 bg-yellow-300/10 px-3 py-1.5 text-base font-semibold text-yellow-100">

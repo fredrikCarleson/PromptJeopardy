@@ -1,4 +1,4 @@
-import { CheckCircle, Maximize2, MousePointerClick, Pause, Play, Plus, Presentation, RotateCcw, Shuffle, Undo2, XCircle } from 'lucide-react';
+import { CheckCircle, Maximize2, MousePointerClick, Pause, Play, Plus, Presentation, RotateCcw, Shuffle, Undo2, Replace } from 'lucide-react';
 import { RoundPhase, Tile } from '../types';
 import { TOPIC_LABELS } from '../data/tiles';
 import { formatTime } from '../utils/formatTime';
@@ -17,14 +17,16 @@ interface RoundFlowProps {
   onSelectRandomPresenter: () => void;
   onShowPresentation: () => void;
   onMarkComplete: () => void;
-  onCancelCurrentTile: () => void;
+  onChooseAnotherQuestion: () => void;
   onUndo: () => void;
   onReset: () => void;
   canMarkComplete: boolean;
+  canChooseAnotherQuestion: boolean;
   presenterName: string | null;
   reviewerName: string | null;
   activeTile: Tile | undefined;
   isFirstRound: boolean;
+  lastDeferredTile: Tile | undefined;
   nextRecommendedTile: Tile | undefined;
   currentPlannedRound: number;
   totalPlannedRounds: number;
@@ -71,14 +73,16 @@ export default function RoundFlow({
   onSelectRandomPresenter,
   onShowPresentation,
   onMarkComplete,
-  onCancelCurrentTile,
+  onChooseAnotherQuestion,
   onUndo,
   onReset,
   canMarkComplete,
+  canChooseAnotherQuestion,
   presenterName,
   reviewerName,
   activeTile,
   isFirstRound,
+  lastDeferredTile,
   nextRecommendedTile,
   currentPlannedRound,
   totalPlannedRounds,
@@ -87,6 +91,23 @@ export default function RoundFlow({
   const isWorking = roundPhase === 'working';
   const isPresenting = roundPhase === 'presenting';
   const isChoosing = roundPhase === 'choosing_next_tile';
+  const canPickOnBoard = !isFirstRound || Boolean(lastDeferredTile);
+
+  const chooseAnotherButton = (
+    <button
+      type="button"
+      onClick={onChooseAnotherQuestion}
+      disabled={!canChooseAnotherQuestion}
+      className={`flex w-full items-center justify-center gap-2 rounded-md py-3 text-base font-semibold transition-colors ${
+        canChooseAnotherQuestion
+          ? 'border border-orange-400/50 bg-orange-500/15 text-orange-50 hover:bg-orange-500/25'
+          : 'cursor-not-allowed bg-slate-800 text-slate-500'
+      }`}
+    >
+      <Replace size={18} />
+      Välj annan fråga
+    </button>
+  );
 
   return (
     <aside className="space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-xl lg:p-5">
@@ -102,7 +123,9 @@ export default function RoundFlow({
       {isSelecting && (
         <div className="space-y-3 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
           <div className="font-semibold text-blue-200">
-            {mode === 'guided_workshop'
+            {lastDeferredTile
+              ? 'Välj en ny fråga'
+              : mode === 'guided_workshop'
               ? nextRecommendedTile
                 ? 'Välj hur nästa ruta ska bestämmas'
                 : 'Den rekommenderade banan är klar'
@@ -110,10 +133,20 @@ export default function RoundFlow({
                 ? 'Första rutan ska slumpas'
                 : 'Välj nästa ruta'}
           </div>
+          {lastDeferredTile && (
+            <div className="rounded-md border border-orange-400/50 bg-orange-500/15 p-3 text-orange-50">
+              <div className="text-sm font-bold">Förra rutan lades tillbaka utan poäng</div>
+              <p className="mt-1 text-sm leading-relaxed text-orange-100">
+                {lastDeferredTile.title} är ledig igen. Välj en annan ruta på tavlan eller slumpa.
+              </p>
+            </div>
+          )}
           <p className="text-sm text-slate-300">
-            {mode === 'guided_workshop'
+            {lastDeferredTile
+              ? 'Ni får inga poäng för den överhoppade frågan. Fortsätt med en ny ruta.'
+              : mode === 'guided_workshop'
               ? nextRecommendedTile
-                ? 'Workshopläget går från insikter till Word och infografik, och avslutas med två sammanhängande Excelrundor.'
+                ? 'Workshopläget går från insikter till sparringpartner och infografik, och avslutas med två sammanhängande Excelrundor.'
                 : 'Fortsätt fritt om ni har tid kvar eller använd slutet till gemensam summering.'
               : isFirstRound
               ? 'Starta workshopen med slumpen så att ingen styr första ämnet.'
@@ -137,17 +170,19 @@ export default function RoundFlow({
               className="flex w-full items-center justify-center gap-2 rounded-md bg-yellow-500 py-2.5 font-semibold text-slate-950 transition-colors hover:bg-yellow-400"
             >
               <Play size={18} />
-              Starta rekommenderad runda
+              {lastDeferredTile ? 'Starta nästa rekommenderade runda' : 'Starta rekommenderad runda'}
             </button>
           )}
-          {!isFirstRound && (
+          {canPickOnBoard && (
             <div className="rounded-md border-2 border-violet-400/60 bg-violet-500/15 p-3 text-violet-50" role="note">
               <div className="flex items-center gap-2 text-base font-bold">
                 <MousePointerClick size={20} />
-                Paret väljer på spelplanen
+                {lastDeferredTile ? 'Välj på spelplanen' : 'Paret väljer på spelplanen'}
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-violet-100">
-                Be det presenterande paret välja ämne och poäng. Klicka sedan direkt på den lediga brickan på spelplanen.
+                {lastDeferredTile
+                  ? 'Klicka direkt på en ledig bricka. Den överhoppade rutan kan väljas senare om ni vill.'
+                  : 'Be det presenterande paret välja ämne och poäng. Klicka sedan direkt på den lediga brickan på spelplanen.'}
               </p>
             </div>
           )}
@@ -271,14 +306,12 @@ export default function RoundFlow({
             {timeRemaining === 0 ? 'Tiden är slut – gå till redovisning' : 'Gå till muntlig redovisning'}
           </button>
 
-          <button
-            type="button"
-            onClick={onCancelCurrentTile}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-800 py-3 text-base font-semibold text-slate-100 transition-colors hover:bg-slate-700"
-          >
-            <XCircle size={18} />
-            Byt ruta om uppgiften inte går att genomföra
-          </button>
+          <div className="space-y-2 border-t border-slate-700 pt-3">
+            {chooseAnotherButton}
+            <p className="text-center text-xs text-slate-400">
+              Ingen poäng läggs till. Rutan blir ledig igen och ni väljer eller slumpar en ny fråga.
+            </p>
+          </div>
         </div>
       )}
 
@@ -323,6 +356,10 @@ export default function RoundFlow({
               Visa reflektionsfrågor
             </button>
           )}
+
+          <div className="space-y-2 border-t border-slate-700 pt-3">
+            {chooseAnotherButton}
+          </div>
         </div>
       )}
 
@@ -363,6 +400,12 @@ export default function RoundFlow({
             <CheckCircle size={18} />
             Markera klar och lägg till poäng
           </button>
+          <div className="space-y-2 border-t border-slate-700 pt-3">
+            {chooseAnotherButton}
+            <p className="text-center text-xs text-slate-400">
+              Hoppa över utan poäng och välj eller slumpa en annan fråga.
+            </p>
+          </div>
         </div>
       )}
 

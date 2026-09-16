@@ -65,10 +65,10 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
             </h2>
             <div className="grid gap-4 md:grid-cols-2">
               {[
-                ['1. Välj ruta', 'Facilitatorn kan starta rekommenderad ruta, slumpa eller låta det presenterande paret välja ämne och poäng direkt på spelplanen.'],
+                ['1. Välj ruta', 'Facilitatorn kan starta rekommenderad ruta, slumpa eller låta det presenterande paret välja ämne och poäng direkt på spelplanen. Om rutan inte passar: Välj annan fråga, utan poäng, och välj eller slumpa en ny.'],
                 ['2. Arbeta', 'Alla par arbetar med samma uppgift under timern och väljer själva en relevant del av rapporten.'],
                 ['3. Redovisa', 'Ett presenterande par visar resultatet. Ett annat granskarpar lyfter en styrka eller ställer en kontrollfråga. Par som ännu inte haft en roll prioriteras.'],
-                ['4. Poäng', 'Facilitatorn markerar rutan som klar. Den blir låst och synlig på tavlan.'],
+                ['4. Poäng', 'Facilitatorn markerar rutan som klar. Den blir låst och synlig på tavlan. En överhoppad ruta ger inga poäng.'],
               ].map(([title, body]) => (
                 <div key={title} className="rounded-md bg-slate-800 p-4">
                   <h3 className="font-bold text-white">{title}</h3>
@@ -97,7 +97,7 @@ export default function RulesScreen({ onBack }: RulesScreenProps) {
           <section className="rounded-lg border border-fuchsia-500/30 bg-slate-900 p-6">
             <h2 className="mb-3 text-2xl font-bold text-white">Muntliga specialmoment</h2>
             <p className="leading-relaxed text-slate-200">
-              I workshopläget bryts spelet av tre korta helgruppsmoment: `Vad saknas?`, `Förbättra prompten` och
+              I workshopläget bryts spelet av tre korta helgruppsmoment: `Vad saknas i prompten?`, `Förbättra prompten` och
               `Farlig detalj`. De ger variation utan att kräva att deltagarna visar egna promptar.
             </p>
           </section>

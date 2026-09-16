@@ -6,7 +6,7 @@ Use this file as context in a new prompt when asking an AI assistant to work on 
 
 PromptJeopardy is a Swedish, Jeopardy-inspired workshop game for teaching AI prompting. The facilitator runs the app on a large shared monitor while participants work in pairs on their own computers.
 
-The workshop material is Skatteverket's annual report plus a Swedish plain-language/klarspråk template. The annual report is around 500 pages, so tasks must ask participants to choose a manageable part of the report: one page, one section, a short page range, one table, one chart, or one image. Tasks should not ask participants to process the full report.
+The workshop material is Skatteverket's annual report plus a Swedish plain-language/klarspråk template. The annual report is around 500 pages, so report-based tasks must ask participants to choose a manageable part of the report: one page, one section, a short page range, one table, one chart, or one image. Five IT-oriented tiles do not use the annual report; they ask participants to supply their own context in Copilot Chat. Tasks should not ask participants to process the full report.
 
 The app does not collect participant answers. Participants work from Microsoft 365 Copilot Chat on their own computers. Some tasks ask them to create, find, compare, or summarize Word documents, PowerPoint decks, Excel material, images, or work files they have permission to access. A randomly selected pair verbally presents what they produced, which source excerpt they used, and how they changed their prompt.
 
@@ -23,11 +23,12 @@ PromptJeopardy should feel much closer to real Jeopardy:
 - In `open_board` mode, the first tile is selected randomly.
 - Later tiles can be selected manually by the presenting pair or randomly by the facilitator.
 - All participants cooperate toward a shared perfect score instead of competing against each other.
-- For a 60-minute workshop, the default guided path is five rounds worth 1700 points. The open-board fallback still uses a 2100-point target for a looser 5-6 round session.
+- For a 60-minute workshop, the default guided path is five rounds worth 1800 points. The open-board fallback still uses a 2100-point target for a looser 5-6 round session.
 - Guided workshop mode also includes three short whole-room oral interludes:
-  - after guided round 2: `Vad saknas?`
+  - after guided round 2: `Vad saknas i prompten?`
   - after guided round 3: `Förbättra prompten`
   - after guided round 4: `Farlig detalj`
+- The facilitator can skip a revealed tile with `Välj annan fråga`. No points are added. The skipped tile returns to the board, randomize prefers a different tile, and workshop mode offers the next recommended round instead of immediately repeating the skipped one.
 
 ## Current Jeopardy Topics
 
@@ -78,10 +79,13 @@ Important types live in `src/types.ts`.
 - `title`
 - `shortLabel`
 - `task`
+- `presentationSteps`
+- `expectedResult`
 - `toolFocus`
 - `appFocus`
 - `learningGoal`
 - `sourceInstruction`
+- `bonusChallenge` (optional; used on the five recommended workshop tiles)
 - `verbalPresentationPrompt`
 - `status`
 
@@ -111,16 +115,16 @@ Task data lives in `src/data/tiles.ts`.
 
 - `src/components/SetupScreen.tsx`
   - Configures number of pairs, score target, work timer, presentation timer, and presenter repeat behavior.
-  - Defaults to a guided 60-minute workshop: five recommended rounds, 1700 points, 5 minutes work time, and 75 seconds verbal reflection.
+  - Defaults to a guided 60-minute workshop: five recommended rounds, 1800 points, 5 minutes work time, and 75 seconds verbal reflection.
 
 - `src/components/GameScreen.tsx`
-  - Main game state controller: progress, round phase, timer, random tile, random presenter, scoring, undo, reset, persistence.
+  - Main game state controller: progress, round phase, timer, random tile, random presenter, scoring, skip/replace question, undo, reset, persistence.
 
 - `src/components/GameBoard.tsx`
   - 5x5 Jeopardy board.
 
 - `src/components/RoundFlow.tsx`
-  - Facilitator control panel for the current phase, including the recommended next round, prompt recipe, fallback tile swap, and post-round teaching cue.
+  - Facilitator control panel for the current phase, including the recommended next round, prompt recipe, choose-another-question, and post-round teaching cue.
 
 - `src/components/PresentationScreen.tsx`
   - Full-screen verbal reflection screen for the randomly selected presenter pair.
@@ -148,7 +152,7 @@ The app uses browser `localStorage`:
   - Stores setup choices and resumes directly into the game.
 
 - `gameProgress`
-  - Stores score, round count, tile states, active tile, last presenter, and history.
+  - Stores score, round count, tile states, active tile, last presenter, history, deferred tiles after a skip, and whether the facilitator is choosing a replacement question.
 
 Reset clears both keys.
 
@@ -165,4 +169,4 @@ The live game screen should prioritize the big monitor experience:
 
 ## Useful Prompt For Future Work
 
-You are working on PromptJeopardy, a Swedish React/TypeScript/Vite/Tailwind app for running a cooperative AI-prompting workshop. Participants work in pairs on their own computers from Microsoft 365 Copilot Chat. The facilitator runs the app on a large monitor. The app should behave like Jeopardy: a 5x5 board, hidden tasks until selected, point values, locked completed tiles, a guided five-round workshop mode with short whole-room oral interludes, an optional open-board mode, random presenter selection, and a shared perfect-score goal. Tasks are based on Skatteverket's annual report and a klarspråk document; because the annual report is around 500 pages, every task must ask participants to choose a small part of the report rather than process all of it. Preserve the manual verbal presentation model: the app shows reflection prompts and timers but does not collect answers or files.
+You are working on PromptJeopardy, a Swedish React/TypeScript/Vite/Tailwind app for running a cooperative AI-prompting workshop. Participants work in pairs on their own computers from Microsoft 365 Copilot Chat. The facilitator runs the app on a large monitor. The app should behave like Jeopardy: a 5x5 board, hidden tasks until selected, point values, locked completed tiles, a guided five-round workshop mode with short whole-room oral interludes, an optional open-board mode, random presenter selection, and a shared perfect-score goal. Most tasks are based on Skatteverket's annual report and a klarspråk document; because the annual report is around 500 pages, report-based tasks must ask participants to choose a small part of the report rather than process all of it. Five IT-oriented tiles do not use the report and ask participants to supply their own context in chat. Preserve the manual verbal presentation model: the app shows reflection prompts and timers but does not collect answers or files.

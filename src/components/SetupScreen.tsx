@@ -208,7 +208,7 @@ export default function SetupScreen({ onStartGame, onBack }: SetupScreenProps) {
 
             <div className="rounded-md border border-blue-500/30 bg-blue-500/10 p-4 text-sm leading-relaxed text-blue-100">
               {mode === 'guided_workshop'
-                ? 'Workshopläget använder fem planerade rutor och tre korta muntliga specialmoment mellan rundorna: Vad saknas?, Förbättra prompten och Farlig detalj.'
+                ? 'Workshopläget använder fem planerade rutor (1800 poäng) och tre korta muntliga specialmoment mellan rundorna: Vad saknas i prompten?, Förbättra prompten och Farlig detalj.'
                 : 'Fri tavla passar när du vill ha mer spelshow-känsla. Med 60 minuter hinner gruppen oftast 5-6 frågor, så 2100 poäng kräver flera svårare rutor.'}
             </div>
 

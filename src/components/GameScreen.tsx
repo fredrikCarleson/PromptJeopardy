@@ -46,6 +46,8 @@ interface StoredGameProgress {
   history: Array<{ tileId: number; points: number; presenterIndex: number | null; reviewerIndex?: number | null }>;
   roundState?: Omit<RoundState, 'timerRunning'>;
   completedSpecialMomentIds?: SpecialMomentId[];
+  deferredTileIds?: number[];
+  awaitingReplacement?: boolean;
 }
 
 interface GameScreenProps {
@@ -95,10 +97,14 @@ const isLegacyProgressCompatible = (value: unknown): value is GameProgress => {
   return Array.isArray(progress.tiles) && progress.tiles.every((tile) => 'id' in tile && 'status' in tile);
 };
 
-const loadInitialSession = (timerMinutes: number): { progress: GameProgress; roundState: RoundState } => {
+const loadInitialSession = (
+  timerMinutes: number
+): { progress: GameProgress; roundState: RoundState; deferredTileIds: number[]; awaitingReplacement: boolean } => {
   const fallback = {
     progress: createInitialProgress(),
     roundState: createInitialRoundState(timerMinutes),
+    deferredTileIds: [] as number[],
+    awaitingReplacement: false,
   };
   const saved = localStorage.getItem('gameProgress');
   if (!saved) return fallback;
@@ -130,6 +136,8 @@ const loadInitialSession = (timerMinutes: number): { progress: GameProgress; rou
                 timerRunning: false,
               }
             : createInitialRoundState(timerMinutes),
+        deferredTileIds: parsed.deferredTileIds ?? [],
+        awaitingReplacement: parsed.awaitingReplacement ?? false,
       };
     }
 
@@ -160,6 +168,8 @@ const loadInitialSession = (timerMinutes: number): { progress: GameProgress; rou
                 timeRemaining: timerMinutes * 60,
               }
             : createInitialRoundState(timerMinutes),
+        deferredTileIds: [],
+        awaitingReplacement: false,
       };
     }
   } catch {
@@ -179,6 +189,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
 
   const [progress, setProgress] = useState<GameProgress>(initialSessionRef.current.progress);
   const [roundState, setRoundState] = useState<RoundState>(initialSessionRef.current.roundState);
+  const [deferredTileIds, setDeferredTileIds] = useState<number[]>(initialSessionRef.current.deferredTileIds);
+  const [awaitingReplacement, setAwaitingReplacement] = useState(initialSessionRef.current.awaitingReplacement);
 
   const [selectedTileForModal, setSelectedTileForModal] = useState<number | null>(null);
   const [showPresentationScreen, setShowPresentationScreen] = useState(false);
@@ -209,6 +221,12 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   const progressRef = useRef(progress);
   progressRef.current = progress;
 
+  const deferredTileIdsRef = useRef(deferredTileIds);
+  deferredTileIdsRef.current = deferredTileIds;
+
+  const awaitingReplacementRef = useRef(awaitingReplacement);
+  awaitingReplacementRef.current = awaitingReplacement;
+
   useEffect(() => {
     if (persistTimeoutRef.current) clearTimeout(persistTimeoutRef.current);
     persistTimeoutRef.current = setTimeout(() => {
@@ -220,6 +238,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
         lastPresenterIndex: progress.lastPresenterIndex,
         history: progress.history,
         completedSpecialMomentIds,
+        deferredTileIds,
+        awaitingReplacement,
         roundState: {
           phase: roundState.phase,
           activeTileId: roundState.activeTileId,
@@ -233,7 +253,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     return () => {
       if (persistTimeoutRef.current) clearTimeout(persistTimeoutRef.current);
     };
-  }, [completedSpecialMomentIds, progress, roundState]);
+  }, [awaitingReplacement, completedSpecialMomentIds, deferredTileIds, progress, roundState]);
 
   useEffect(() => {
     setGoalReached(progress.currentScore >= config.targetScore);
@@ -284,10 +304,19 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       const isFirstRound = progressRef.current.roundCount === 0 && progressRef.current.history.length === 0;
 
       if (currentPhase === 'selecting_tile') {
-        if (config.mode === 'open_board' && isFirstRound && source !== 'random') return;
+        if (
+          config.mode === 'open_board' &&
+          isFirstRound &&
+          source !== 'random' &&
+          !awaitingReplacementRef.current
+        ) {
+          return;
+        }
         if (tile.status !== 'unplayed') return;
         if (soundEnabled && source !== 'random') playTileReveal();
 
+        setDeferredTileIds((prev) => prev.filter((id) => id !== tileId));
+        setAwaitingReplacement(false);
         setProgress((prev) => ({
           ...prev,
           tiles: prev.tiles.map((candidate) =>
@@ -317,13 +346,19 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     const unplayedTiles = progressRef.current.tiles.filter((tile) => tile.status === 'unplayed');
     if (unplayedTiles.length === 0) return;
 
-    const randomTile = unplayedTiles[Math.floor(Math.random() * unplayedTiles.length)];
+    const preferredTiles = unplayedTiles.filter((tile) => !deferredTileIdsRef.current.includes(tile.id));
+    const tilePool = preferredTiles.length > 0 ? preferredTiles : unplayedTiles;
+    const randomTile = tilePool[Math.floor(Math.random() * tilePool.length)];
     setRevealAnimation({ targetTile: randomTile });
   }, []);
 
-  const nextRecommendedTile = config.plannedTileIds
-    .map((tileId) => progress.tiles.find((tile) => tile.id === tileId))
-    .find((tile): tile is Tile => !!tile && tile.status === 'unplayed');
+  const nextRecommendedTile =
+    config.plannedTileIds
+      .map((tileId) => progress.tiles.find((tile) => tile.id === tileId))
+      .find((tile): tile is Tile => !!tile && tile.status === 'unplayed' && !deferredTileIds.includes(tile.id)) ??
+    config.plannedTileIds
+      .map((tileId) => progress.tiles.find((tile) => tile.id === tileId))
+      .find((tile): tile is Tile => !!tile && tile.status === 'unplayed');
 
   const selectRecommendedTile = useCallback(() => {
     if (!nextRecommendedTile) return;
@@ -364,10 +399,17 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
     }));
   }, []);
 
-  const cancelCurrentTile = useCallback(() => {
+  const chooseAnotherQuestion = useCallback(() => {
     const activeTileId = roundStateRef.current.activeTileId;
     if (activeTileId === null) return;
 
+    const hasReplacement = progressRef.current.tiles.some(
+      (tile) => tile.status === 'unplayed' && tile.id !== activeTileId
+    );
+    if (!hasReplacement) return;
+
+    setDeferredTileIds((prev) => (prev.includes(activeTileId) ? prev : [...prev, activeTileId]));
+    setAwaitingReplacement(true);
     setProgress((prev) => ({
       ...prev,
       tiles: prev.tiles.map((tile) =>
@@ -375,6 +417,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
       ),
       currentActiveTileId: null,
     }));
+    setSelectedTileForModal(null);
+    setShowPresentationScreen(false);
     setRoundState(createInitialRoundState(timerMinutes));
   }, [timerMinutes]);
 
@@ -534,6 +578,14 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
   const completedCount = progress.tiles.filter((tile) => tile.status === 'completed').length;
   const allTilesPlayed = completedCount === progress.tiles.length && !goalReached && progress.currentScore < config.targetScore;
   const isFirstRound = progress.roundCount === 0 && progress.history.length === 0;
+  const replacementSelectionEnabled = awaitingReplacement;
+  const canChooseAnotherQuestion =
+    roundState.activeTileId !== null &&
+    progress.tiles.some((tile) => tile.status === 'unplayed' && tile.id !== roundState.activeTileId);
+  const lastDeferredTile =
+    awaitingReplacement && deferredTileIds.length
+      ? progress.tiles.find((tile) => tile.id === deferredTileIds[deferredTileIds.length - 1])
+      : undefined;
   const currentPlannedRound = config.plannedTileIds.filter((tileId) =>
     progress.history.some((move) => move.tileId === tileId)
   ).length;
@@ -629,8 +681,9 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 onSelectTile={selectTile}
                 activeTileId={roundState.activeTileId}
                 roundPhase={roundState.phase}
-                manualSelectionEnabled={!isFirstRound}
+                manualSelectionEnabled={!isFirstRound || replacementSelectionEnabled}
                 mode={config.mode}
+                replacementSelectionEnabled={replacementSelectionEnabled}
               />
             </div>
 
@@ -649,10 +702,11 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 onSelectRandomPresenter={selectRandomPresenter}
                 onShowPresentation={showPresentation}
                 onMarkComplete={markTileComplete}
-                onCancelCurrentTile={cancelCurrentTile}
+                onChooseAnotherQuestion={chooseAnotherQuestion}
                 onUndo={undoLastMove}
                 onReset={confirmReset}
                 canMarkComplete={roundState.activeTileId !== null}
+                canChooseAnotherQuestion={canChooseAnotherQuestion}
                 presenterName={
                   roundState.presenterIndex !== null
                     ? config.pairNames[roundState.presenterIndex]
@@ -665,6 +719,7 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
                 }
                 activeTile={activeTile}
                 isFirstRound={isFirstRound}
+                lastDeferredTile={lastDeferredTile}
                 nextRecommendedTile={nextRecommendedTile}
                 currentPlannedRound={currentPlannedRound}
                 totalPlannedRounds={config.plannedTileIds.length}
@@ -681,6 +736,8 @@ export default function GameScreen({ config, onResetGame }: GameScreenProps) {
           timeRemaining={roundState.timeRemaining}
           timerRunning={roundState.timerRunning}
           onToggleTimer={startTimer}
+          canChooseAnotherQuestion={canChooseAnotherQuestion}
+          onChooseAnotherQuestion={chooseAnotherQuestion}
         />
       )}
     </div>
