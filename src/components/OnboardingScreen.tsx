@@ -121,6 +121,8 @@ export default function OnboardingScreen({ onStartSetup, onViewRules }: Onboardi
             Ladda ner Excelövning
           </a>
         </div>
+
+        <p className="text-center text-sm text-slate-500">Senast uppdaterad 22 september 2026</p>
       </div>
     </main>
   );
